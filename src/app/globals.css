@@ -1,62 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette */
-  --color-bg:            #F6F5EE;
-  --color-surface:       #FFFFFF;
-  --color-surface-alt:   #F0F0E8;
-  --color-primary:       #1C3520;
-  --color-primary-hover: #254427;
-  --color-accent:        #ADDA3B;
-  --color-accent-dark:   #92C22A;
-  --color-ink:           #141614;
-  --color-ink-2:         #3C4B3C;
-  --color-muted:         #8B9489;
-  --color-border:        #E0E3D8;
-  --color-border-strong: #C8CCBF;
+  /* Dark base */
+  --color-canvas:       #070E07;
+  --color-canvas-2:     #0D1A0D;
+  --color-canvas-3:     #122012;
 
-  /* Status */
-  --color-success:       #16A34A;
-  --color-warning:       #D97706;
-  --color-danger:        #DC2626;
+  /* Light surface (content area) */
+  --color-surface:      #F2F6F2;
+  --color-card:         #FFFFFF;
+
+  /* Brand */
+  --color-lime:         #C5F135;
+  --color-lime-dark:    #9DC22A;
+  --color-green:        #22C55E;
+
+  /* Text */
+  --color-ink:          #0D1509;
+  --color-ink-light:    #E0EDE0;
+  --color-muted:        #6B8A6B;
+  --color-muted-light:  rgba(255,255,255,0.45);
+
+  /* Borders */
+  --color-border:       #E0E8E0;
+  --color-border-dark:  rgba(255,255,255,0.09);
+
+  /* Glass */
+  --color-glass:        rgba(255,255,255,0.07);
+  --color-glass-hover:  rgba(255,255,255,0.12);
 
   /* Fonts */
-  --font-sans:    'Inter', sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-sans:    'DM Sans', sans-serif;
+  --font-display: 'Inter', sans-serif;
 }
 
-* {
+*, *::before, *::after {
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-ink);
+  background: var(--color-canvas);
+  color: var(--color-ink-light);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
 
-/* Hide scrollbar */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* Scrollbar hidden */
+.no-scroll::-webkit-scrollbar { display: none; }
+.no-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Safe areas */
-.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
-.safe-top    { padding-top:    max(env(safe-area-inset-top, 0px), 8px); }
+.safe-b { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+
+/* Glass utility */
+.glass {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+}
+
+/* Lime glow on active */
+.lime-glow {
+  box-shadow: 0 0 20px rgba(197, 241, 53, 0.3);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

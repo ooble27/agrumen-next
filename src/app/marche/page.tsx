@@ -5,483 +5,493 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, SlidersHorizontal, ShoppingCart, MapPin,
   Apple, Leaf, Wheat, Flame, LayoutGrid, Star, Plus,
-  Minus, ChevronDown, Home, User, Heart, ArrowLeft,
-  Sprout, Package
+  Minus, ChevronDown, Home, User, Heart, Sprout, Package,
+  ArrowRight, TrendingUp, Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { cn, formatPrice } from "@/lib/utils";
 
-/* ─── Types ───────────────────────────────────────────────── */
-
-type CategoryId = "all" | "fruits" | "legumes" | "cereales" | "epices";
+/* ─── Types ──────────────────────────────────────────────── */
+type CatId = "all" | "fruits" | "legumes" | "cereales" | "epices";
 
 interface Category {
-  id: CategoryId;
+  id: CatId;
   label: string;
   icon: React.ElementType;
   color: string;
-  lightBg: string;
+  gradFrom: string;
+  gradTo: string;
 }
 
 interface Product {
   id: string;
   name: string;
-  category: Exclude<CategoryId, "all">;
+  category: Exclude<CatId, "all">;
   price: number;
   unit: string;
   shop: string;
   city: string;
   rating: number;
   reviews: number;
-  stock: number;
   badge?: string;
+  promo?: number;
 }
 
-/* ─── Data ────────────────────────────────────────────────── */
-
-const CATEGORIES: Category[] = [
-  { id: "all",      label: "Tout",    icon: LayoutGrid, color: "#1C3520", lightBg: "#EEF3EE" },
-  { id: "fruits",   label: "Fruits",  icon: Apple,      color: "#C2410C", lightBg: "#FFF4ED" },
-  { id: "legumes",  label: "Légumes", icon: Leaf,       color: "#16A34A", lightBg: "#F0FDF4" },
-  { id: "cereales", label: "Céréales",icon: Wheat,      color: "#B45309", lightBg: "#FFFBEB" },
-  { id: "epices",   label: "Épices",  icon: Flame,      color: "#DC2626", lightBg: "#FEF2F2" },
+/* ─── Data ───────────────────────────────────────────────── */
+const CATS: Category[] = [
+  { id: "all",      label: "Tout",     icon: LayoutGrid, color: "#C5F135", gradFrom: "#1E3D1E", gradTo: "#0E2A0E" },
+  { id: "fruits",   label: "Fruits",   icon: Apple,      color: "#FB923C", gradFrom: "#431407", gradTo: "#1C0A02" },
+  { id: "legumes",  label: "Légumes",  icon: Leaf,       color: "#4ADE80", gradFrom: "#052E16", gradTo: "#021408" },
+  { id: "cereales", label: "Céréales", icon: Wheat,      color: "#FCD34D", gradFrom: "#451A03", gradTo: "#1C0A00" },
+  { id: "epices",   label: "Épices",   icon: Flame,      color: "#F87171", gradFrom: "#450A0A", gradTo: "#1C0404" },
 ];
 
 const PRODUCTS: Product[] = [
-  { id:"p1",  name:"Tomates cerise",    category:"legumes",  price:850,  unit:"kg",    shop:"Ferme Dakar",      city:"Dakar",       rating:4.8, reviews:124, stock:20, badge:"Populaire" },
-  { id:"p2",  name:"Mangues Kent",      category:"fruits",   price:1200, unit:"kg",    shop:"Verger Thiès",     city:"Thiès",       rating:4.9, reviews:89,  stock:15, badge:"Saison" },
-  { id:"p3",  name:"Riz Jasmine",       category:"cereales", price:650,  unit:"kg",    shop:"Grain du Sahel",   city:"Saint-Louis", rating:4.6, reviews:210, stock:100 },
-  { id:"p4",  name:"Piment rouge",      category:"epices",   price:500,  unit:"botte", shop:"Épices du Nord",   city:"Dakar",       rating:4.7, reviews:56,  stock:30 },
-  { id:"p5",  name:"Bananes",           category:"fruits",   price:750,  unit:"kg",    shop:"Verger Thiès",     city:"Thiès",       rating:4.5, reviews:73,  stock:40 },
-  { id:"p6",  name:"Carottes bio",      category:"legumes",  price:600,  unit:"kg",    shop:"Maraîcher Bio",    city:"Mbour",       rating:4.8, reviews:98,  stock:25, badge:"Bio" },
-  { id:"p7",  name:"Mil Souna",         category:"cereales", price:450,  unit:"kg",    shop:"Grain du Sahel",   city:"Saint-Louis", rating:4.7, reviews:163, stock:80 },
-  { id:"p8",  name:"Gingembre frais",   category:"epices",   price:1000, unit:"kg",    shop:"Ferme Dakar",      city:"Dakar",       rating:4.9, reviews:44,  stock:15, badge:"Premium" },
-  { id:"p9",  name:"Pastèques",         category:"fruits",   price:300,  unit:"pièce", shop:"Ferme Dakar",      city:"Dakar",       rating:4.4, reviews:37,  stock:10 },
-  { id:"p10", name:"Aubergines",        category:"legumes",  price:700,  unit:"kg",    shop:"Maraîcher Bio",    city:"Mbour",       rating:4.6, reviews:55,  stock:20 },
-  { id:"p11", name:"Maïs doux",         category:"cereales", price:250,  unit:"épi",   shop:"Grain du Sahel",   city:"Saint-Louis", rating:4.8, reviews:181, stock:50, badge:"Nouveau" },
-  { id:"p12", name:"Cumin entier",      category:"epices",   price:800,  unit:"100g",  shop:"Épices du Nord",   city:"Dakar",       rating:4.7, reviews:29,  stock:35 },
-  { id:"p13", name:"Papayes",           category:"fruits",   price:900,  unit:"kg",    shop:"Verger Thiès",     city:"Thiès",       rating:4.6, reviews:61,  stock:18 },
-  { id:"p14", name:"Oignons violets",   category:"legumes",  price:550,  unit:"kg",    shop:"Ferme Dakar",      city:"Dakar",       rating:4.7, reviews:142, stock:60 },
-  { id:"p15", name:"Fonio",             category:"cereales", price:1500, unit:"kg",    shop:"Grain du Sahel",   city:"Saint-Louis", rating:4.9, reviews:78,  stock:40, badge:"Bio" },
-  { id:"p16", name:"Poivre noir",       category:"epices",   price:1200, unit:"100g",  shop:"Épices du Nord",   city:"Dakar",       rating:4.8, reviews:33,  stock:25, badge:"Premium" },
+  { id:"p1",  name:"Tomates cerise",  category:"legumes",  price:850,  unit:"kg",    shop:"Ferme Dakar",    city:"Dakar",       rating:4.8, reviews:124, badge:"Populaire" },
+  { id:"p2",  name:"Mangues Kent",    category:"fruits",   price:1200, unit:"kg",    shop:"Verger Thiès",   city:"Thiès",       rating:4.9, reviews:89,  badge:"Saison", promo:10 },
+  { id:"p3",  name:"Riz Jasmine",     category:"cereales", price:650,  unit:"kg",    shop:"Grain du Sahel", city:"Saint-Louis", rating:4.6, reviews:210 },
+  { id:"p4",  name:"Piment rouge",    category:"epices",   price:500,  unit:"botte", shop:"Épices du Nord", city:"Dakar",       rating:4.7, reviews:56 },
+  { id:"p5",  name:"Bananes",         category:"fruits",   price:750,  unit:"kg",    shop:"Verger Thiès",   city:"Thiès",       rating:4.5, reviews:73 },
+  { id:"p6",  name:"Carottes bio",    category:"legumes",  price:600,  unit:"kg",    shop:"Maraîcher Bio",  city:"Mbour",       rating:4.8, reviews:98,  badge:"Bio" },
+  { id:"p7",  name:"Mil Souna",       category:"cereales", price:450,  unit:"kg",    shop:"Grain du Sahel", city:"Saint-Louis", rating:4.7, reviews:163 },
+  { id:"p8",  name:"Gingembre frais", category:"epices",   price:1000, unit:"kg",    shop:"Ferme Dakar",    city:"Dakar",       rating:4.9, reviews:44,  badge:"Premium" },
+  { id:"p9",  name:"Pastèques",       category:"fruits",   price:300,  unit:"pièce", shop:"Ferme Dakar",    city:"Dakar",       rating:4.4, reviews:37,  promo:15 },
+  { id:"p10", name:"Aubergines",      category:"legumes",  price:700,  unit:"kg",    shop:"Maraîcher Bio",  city:"Mbour",       rating:4.6, reviews:55 },
+  { id:"p11", name:"Maïs doux",       category:"cereales", price:250,  unit:"épi",   shop:"Grain du Sahel", city:"Saint-Louis", rating:4.8, reviews:181, badge:"Nouveau" },
+  { id:"p12", name:"Cumin entier",    category:"epices",   price:800,  unit:"100g",  shop:"Épices du Nord", city:"Dakar",       rating:4.7, reviews:29 },
+  { id:"p13", name:"Papayes",         category:"fruits",   price:900,  unit:"kg",    shop:"Verger Thiès",   city:"Thiès",       rating:4.6, reviews:61 },
+  { id:"p14", name:"Oignons violets", category:"legumes",  price:550,  unit:"kg",    shop:"Ferme Dakar",    city:"Dakar",       rating:4.7, reviews:142 },
+  { id:"p15", name:"Fonio",           category:"cereales", price:1500, unit:"kg",    shop:"Grain du Sahel", city:"Saint-Louis", rating:4.9, reviews:78,  badge:"Bio" },
+  { id:"p16", name:"Poivre noir",     category:"epices",   price:1200, unit:"100g",  shop:"Épices du Nord", city:"Dakar",       rating:4.8, reviews:33,  badge:"Premium" },
 ];
 
-/* ─── Sub-components ──────────────────────────────────────── */
-
-function ProductCardImage({ category }: { category: Exclude<CategoryId, "all"> }) {
-  const cat = CATEGORIES.find(c => c.id === category)!;
+/* ─── Product image area ─────────────────────────────────── */
+function ProductImage({ category }: { category: Exclude<CatId, "all"> }) {
+  const cat = CATS.find(c => c.id === category)!;
   const Icon = cat.icon;
   return (
     <div
-      className="w-full aspect-square rounded-2xl flex items-center justify-center relative overflow-hidden"
-      style={{ background: `linear-gradient(135deg, ${cat.lightBg}, ${cat.lightBg}CC)` }}
+      className="w-full aspect-[4/3] flex items-center justify-center relative"
+      style={{ background: `linear-gradient(135deg, ${cat.gradFrom} 0%, ${cat.gradTo} 100%)` }}
     >
       <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center"
-        style={{ backgroundColor: cat.color + "15" }}
+        className="w-14 h-14 rounded-2xl flex items-center justify-center"
+        style={{ background: `${cat.color}18` }}
       >
-        <Icon size={32} strokeWidth={1.5} style={{ color: cat.color }} />
+        <Icon size={28} strokeWidth={1.8} style={{ color: cat.color }} />
       </div>
     </div>
   );
 }
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <span className="flex items-center gap-0.5 text-xs font-medium" style={{ color: "#D97706" }}>
-      <Star size={11} fill="#D97706" strokeWidth={0} />
-      {rating.toFixed(1)}
-    </span>
-  );
-}
-
+/* ─── Product card ───────────────────────────────────────── */
 function ProductCard({
-  product,
-  quantity,
-  onAdd,
-  onRemove,
+  product, qty, onAdd, onRemove,
 }: {
-  product: Product;
-  quantity: number;
-  onAdd: () => void;
-  onRemove: () => void;
+  product: Product; qty: number;
+  onAdd: () => void; onRemove: () => void;
 }) {
+  const finalPrice = product.promo
+    ? Math.round(product.price * (1 - product.promo / 100))
+    : product.price;
+
   return (
-    <motion.div
+    <motion.article
       layout
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.25 }}
-      className="bg-surface rounded-2xl p-3 flex flex-col gap-3 cursor-pointer
-                 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)]
-                 hover:shadow-[0_4px_12px_rgba(0,0,0,0.10),0_8px_24px_rgba(0,0,0,0.06)]
-                 transition-shadow"
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-card rounded-2xl overflow-hidden
+                 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]
+                 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12),0_8px_40px_rgba(0,0,0,0.06)]
+                 transition-shadow duration-300 cursor-pointer group"
     >
       {/* Image */}
-      <div className="relative">
-        <ProductCardImage category={product.category} />
+      <div className="relative overflow-hidden">
+        <ProductImage category={product.category} />
         {product.badge && (
-          <span
-            className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
-            style={{ backgroundColor: "#1C3520" }}
-          >
+          <span className="absolute top-2 left-2 text-[10px] font-bold tracking-wide
+                           px-2 py-1 rounded-full text-[#070E07] bg-[#C5F135]">
             {product.badge}
+          </span>
+        )}
+        {product.promo && (
+          <span className="absolute top-2 right-2 text-[10px] font-bold
+                           px-2 py-1 rounded-full text-white bg-red-500">
+            -{product.promo}%
           </span>
         )}
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-1">
-        <p className="font-display text-sm font-bold text-ink leading-tight line-clamp-2">
-          {product.name}
-        </p>
-        <div className="flex items-center gap-2">
-          <StarRating rating={product.rating} />
-          <span className="text-[11px] text-muted">· {product.city}</span>
-        </div>
-      </div>
-
-      {/* Price + Cart */}
-      <div className="flex items-center justify-between mt-auto">
+      <div className="p-3 flex flex-col gap-2.5">
         <div>
-          <span className="font-display text-base font-black text-ink">
-            {formatPrice(product.price)}
-          </span>
-          <span className="text-xs text-muted ml-1">/{product.unit}</span>
+          <p className="font-display text-sm font-bold text-ink leading-snug line-clamp-2">
+            {product.name}
+          </p>
+          <div className="flex items-center gap-1.5 mt-1">
+            <Star size={11} fill="#F59E0B" strokeWidth={0} />
+            <span className="text-[11px] font-semibold text-[#92400E]">{product.rating}</span>
+            <span className="text-[11px] text-muted">· {product.city}</span>
+          </div>
         </div>
 
-        <AnimatePresence mode="wait">
-          {quantity === 0 ? (
-            <motion.button
-              key="add"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              whileTap={{ scale: 0.88 }}
-              onClick={(e) => { e.stopPropagation(); onAdd(); }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer text-white"
-              style={{ backgroundColor: "#1C3520" }}
-              aria-label={`Ajouter ${product.name}`}
-            >
-              <Plus size={16} strokeWidth={2.5} />
-            </motion.button>
-          ) : (
-            <motion.div
-              key="qty"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="flex items-center gap-1.5"
-            >
-              <button
-                onClick={(e) => { e.stopPropagation(); onRemove(); }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer text-white"
-                style={{ backgroundColor: "#1C3520" }}
-                aria-label="Retirer"
+        <div className="flex items-end justify-between">
+          <div>
+            <span className="font-display text-base font-black text-ink">
+              {formatPrice(finalPrice)}
+            </span>
+            <span className="text-[11px] text-muted ml-1">/{product.unit}</span>
+            {product.promo && (
+              <p className="text-[10px] text-muted line-through leading-none">
+                {formatPrice(product.price)}
+              </p>
+            )}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {qty === 0 ? (
+              <motion.button
+                key="add"
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.7, opacity: 0 }}
+                whileTap={{ scale: 0.85 }}
+                onClick={e => { e.stopPropagation(); onAdd(); }}
+                className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer
+                           bg-[#0E2A0E] text-[#C5F135] hover:bg-[#1a4a1a] transition-colors"
+                aria-label={`Ajouter ${product.name}`}
               >
-                <Minus size={13} strokeWidth={2.5} />
-              </button>
-              <span className="font-display font-black text-sm w-4 text-center text-ink">
-                {quantity}
-              </span>
-              <button
-                onClick={(e) => { e.stopPropagation(); onAdd(); }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer"
-                style={{ backgroundColor: "#ADDA3B" }}
-                aria-label="Ajouter un de plus"
+                <Plus size={17} strokeWidth={2.5} />
+              </motion.button>
+            ) : (
+              <motion.div
+                key="qty"
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.7, opacity: 0 }}
+                className="flex items-center gap-1"
               >
-                <Plus size={13} strokeWidth={2.5} style={{ color: "#1C3520" }} />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <button
+                  onClick={e => { e.stopPropagation(); onRemove(); }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer
+                             bg-[#F2F6F2] hover:bg-[#E0E8E0] transition-colors text-ink"
+                  aria-label="Retirer"
+                >
+                  <Minus size={13} strokeWidth={2.5} />
+                </button>
+                <motion.span
+                  key={qty}
+                  initial={{ scale: 1.3 }}
+                  animate={{ scale: 1 }}
+                  className="font-display font-black text-sm w-5 text-center text-ink"
+                >
+                  {qty}
+                </motion.span>
+                <button
+                  onClick={e => { e.stopPropagation(); onAdd(); }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer
+                             bg-[#C5F135] hover:bg-[#9DC22A] transition-colors text-[#070E07]"
+                  aria-label="Un de plus"
+                >
+                  <Plus size={13} strokeWidth={2.5} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
-/* ─── Main page ───────────────────────────────────────────── */
-
+/* ─── Page ───────────────────────────────────────────────── */
 export default function MarchePage() {
-  const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
-  const [cart, setCart] = useState<Record<string, number>>({});
-  const [scrolled, setScrolled] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "rating">("default");
-  const searchRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery]       = useState("");
+  const [cat, setCat]           = useState<CatId>("all");
+  const [cart, setCart]         = useState<Record<string, number>>({});
+  const [sort, setSort]         = useState<"default"|"price_asc"|"price_desc"|"rating">("default");
+  const [showSort, setShowSort] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
-  const cartTotal = Object.entries(cart).reduce((sum, [id, qty]) => {
-    const p = PRODUCTS.find(p => p.id === id);
-    return sum + (p ? p.price * qty : 0);
+  const cartTotal = Object.entries(cart).reduce((s, [id, qty]) => {
+    const p = PRODUCTS.find(x => x.id === id);
+    const price = p?.promo ? Math.round(p.price * (1 - p.promo / 100)) : (p?.price ?? 0);
+    return s + price * qty;
   }, 0);
 
-  const addToCart = (id: string) =>
-    setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  const removeFromCart = (id: string) =>
-    setCart(prev => {
-      const next = { ...prev };
-      if ((next[id] || 0) <= 1) delete next[id];
-      else next[id]--;
-      return next;
-    });
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
+  const addToCart    = (id: string) => setCart(p => ({ ...p, [id]: (p[id] || 0) + 1 }));
+  const removeFromCart = (id: string) => setCart(p => {
+    const n = { ...p };
+    if ((n[id] || 0) <= 1) delete n[id]; else n[id]--;
+    return n;
+  });
 
   const filtered = PRODUCTS
     .filter(p =>
-      (activeCategory === "all" || p.category === activeCategory) &&
+      (cat === "all" || p.category === cat) &&
       p.name.toLowerCase().includes(query.toLowerCase())
     )
     .sort((a, b) => {
-      if (sortBy === "price_asc")  return a.price - b.price;
-      if (sortBy === "price_desc") return b.price - a.price;
-      if (sortBy === "rating")     return b.rating - a.rating;
+      if (sort === "price_asc")  return a.price - b.price;
+      if (sort === "price_desc") return b.price - a.price;
+      if (sort === "rating")     return b.rating - a.rating;
       return 0;
     });
 
-  const activeLabel = CATEGORIES.find(c => c.id === activeCategory)?.label ?? "Tout";
+  const activeCat = CATS.find(c => c.id === cat)!;
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-canvas">
 
-      {/* ── Sticky Header ─────────────────────────────────── */}
-      <header
-        className={cn(
-          "fixed top-0 inset-x-0 z-50 transition-all duration-300",
-          scrolled
-            ? "bg-surface/95 backdrop-blur-md shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-            : "bg-transparent"
-        )}
-      >
-        <div className="max-w-6xl mx-auto px-4 md:px-8 safe-top">
-          <div className="h-14 flex items-center justify-between gap-4">
+      {/* ── Floating header ──────────────────────────────── */}
+      <header className="fixed top-3 left-3 right-3 z-50">
+        <div className="glass rounded-2xl px-4 h-14 flex items-center justify-between max-w-6xl mx-auto">
 
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: "#1C3520" }}
-              >
-                <Sprout size={16} strokeWidth={2} className="text-white" />
-              </div>
-              <span className="font-display font-black text-base text-ink hidden sm:block">
-                Agrumen
-              </span>
-            </Link>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+            <div className="w-8 h-8 rounded-xl bg-[#C5F135] flex items-center justify-center">
+              <Sprout size={16} strokeWidth={2.5} className="text-[#070E07]" />
+            </div>
+            <span className="font-display font-black text-sm text-white hidden sm:block tracking-tight">
+              Agrumen
+            </span>
+          </Link>
 
-            {/* Location */}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-alt hover:bg-border transition-colors cursor-pointer">
-              <MapPin size={13} style={{ color: "#1C3520" }} strokeWidth={2.5} />
-              <span className="font-display text-xs font-bold text-ink">Dakar</span>
-              <ChevronDown size={12} className="text-muted" strokeWidth={2.5} />
-            </button>
+          {/* Location */}
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                             bg-white/5 border border-white/10 hover:bg-white/10
+                             transition-colors cursor-pointer">
+            <MapPin size={12} className="text-[#C5F135]" strokeWidth={2.5} />
+            <span className="font-display text-xs font-semibold text-white/80">Dakar</span>
+            <ChevronDown size={11} className="text-white/40" strokeWidth={2.5} />
+          </button>
 
-            {/* Cart */}
-            <motion.button
-              whileTap={{ scale: 0.92 }}
-              className="relative flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer text-white"
-              style={{ backgroundColor: "#1C3520" }}
-              aria-label={`Panier, ${cartCount} article${cartCount !== 1 ? "s" : ""}`}
-            >
-              <ShoppingCart size={16} strokeWidth={2} />
-              {cartCount > 0 && (
+          {/* Cart */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            className="relative flex items-center gap-2 h-9 px-3 rounded-xl cursor-pointer
+                       bg-[#C5F135] text-[#070E07] font-display font-black text-xs
+                       hover:bg-[#9DC22A] transition-colors"
+            aria-label={`Panier ${cartCount} article${cartCount !== 1 ? "s" : ""}`}
+          >
+            <ShoppingCart size={15} strokeWidth={2.5} />
+            <AnimatePresence mode="wait">
+              {cartCount > 0 ? (
                 <motion.span
                   key={cartCount}
-                  initial={{ scale: 0.6 }}
-                  animate={{ scale: 1 }}
-                  className="font-display text-xs font-black"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
                 >
                   {cartCount}
                 </motion.span>
-              )}
-              {cartCount === 0 && (
-                <span className="font-display text-xs font-semibold hidden sm:block">
+              ) : (
+                <motion.span key="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   Panier
-                </span>
+                </motion.span>
               )}
-            </motion.button>
-          </div>
+            </AnimatePresence>
+          </motion.button>
         </div>
       </header>
 
-      {/* ── Main ──────────────────────────────────────────── */}
-      <main className="max-w-6xl mx-auto pt-14 pb-28 md:pb-12">
-
-        {/* Hero / Search section */}
-        <div className="px-4 md:px-8 pt-6 pb-4">
-          <h1 className="font-display text-2xl md:text-3xl font-black text-ink mb-1">
-            Marché frais
-          </h1>
-          <p className="text-sm text-muted mb-5">
-            Produits directs des agriculteurs · Livraison rapide
-          </p>
+      {/* ── Hero (dark) ───────────────────────────────────── */}
+      <section
+        className="relative pt-20 pb-8 px-4 md:px-8"
+        style={{
+          background: "radial-gradient(ellipse at 20% -10%, #1F5C20 0%, #0C230C 35%, #070E07 70%)"
+        }}
+      >
+        <div className="max-w-6xl mx-auto">
+          {/* Headline */}
+          <div className="pt-6 pb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <p className="text-[#C5F135] text-xs font-bold tracking-widest uppercase mb-2 flex items-center gap-1.5">
+                <Zap size={11} fill="#C5F135" strokeWidth={0} />
+                Livraison express disponible
+              </p>
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight">
+                Marché frais,<br />
+                <span className="text-[#C5F135]">direct du champ</span>
+              </h1>
+              <p className="mt-2 text-sm text-white/50 font-medium">
+                {PRODUCTS.length} produits · Agriculteurs sénégalais · Dakar
+              </p>
+            </motion.div>
+          </div>
 
           {/* Search bar */}
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none">
-              <Search size={18} strokeWidth={2} />
-            </div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mb-5"
+          >
+            <Search
+              size={17}
+              strokeWidth={2}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+            />
             <input
-              ref={searchRef}
+              ref={inputRef}
               type="search"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Rechercher un produit…"
-              className="w-full h-12 md:h-13 pl-11 pr-20 rounded-2xl bg-surface text-sm font-medium text-ink placeholder:text-muted
-                         outline-none focus:ring-2 transition-all border border-border
-                         shadow-[0_1px_3px_rgba(0,0,0,0.05)]
-                         focus:ring-[#1C3520]/20 focus:border-[#1C3520]/30"
-              style={{ fontFamily: "var(--font-sans)" }}
+              placeholder="Mangues, tomates, mil…"
+              className="w-full h-13 pl-11 pr-24 rounded-2xl
+                         bg-white/10 border border-white/12
+                         text-white placeholder:text-white/35
+                         outline-none focus:bg-white/14 focus:border-white/22
+                         text-sm font-medium transition-all duration-200"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
               <AnimatePresence>
                 {query && (
                   <motion.button
-                    initial={{ opacity: 0, scale: 0.7 }}
+                    initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.7 }}
-                    onClick={() => { setQuery(""); searchRef.current?.focus(); }}
-                    className="w-7 h-7 rounded-xl bg-surface-alt flex items-center justify-center cursor-pointer hover:bg-border transition-colors"
+                    exit={{ opacity: 0, scale: 0.6 }}
+                    onClick={() => { setQuery(""); inputRef.current?.focus(); }}
+                    className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center cursor-pointer"
                     aria-label="Effacer"
                   >
-                    <X size={14} className="text-muted" strokeWidth={2.5} />
+                    <X size={13} className="text-white/60" strokeWidth={2.5} />
                   </motion.button>
                 )}
               </AnimatePresence>
               <button
-                onClick={() => setShowFilters(v => !v)}
+                onClick={() => setShowSort(v => !v)}
                 className={cn(
-                  "w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-colors",
-                  showFilters
-                    ? "text-white"
-                    : "text-ink bg-surface-alt hover:bg-border"
+                  "w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all",
+                  showSort
+                    ? "bg-[#C5F135] text-[#070E07]"
+                    : "bg-white/10 text-white/60 hover:bg-white/15"
                 )}
-                style={showFilters ? { backgroundColor: "#1C3520" } : undefined}
-                aria-label="Filtres"
+                aria-label="Filtres et tri"
               >
-                <SlidersHorizontal size={15} strokeWidth={2} />
+                <SlidersHorizontal size={14} strokeWidth={2} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Filter panel */}
+          {/* Sort panel */}
           <AnimatePresence>
-            {showFilters && (
+            {showSort && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="overflow-hidden"
+                className="overflow-hidden mb-4"
               >
-                <div className="pt-3 flex flex-wrap gap-2">
-                  {(["default", "price_asc", "price_desc", "rating"] as const).map(opt => (
+                <div className="flex flex-wrap gap-2 pb-2">
+                  {(["default","price_asc","price_desc","rating"] as const).map(opt => (
                     <button
                       key={opt}
-                      onClick={() => setSortBy(opt)}
+                      onClick={() => setSort(opt)}
                       className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all font-display",
-                        sortBy === opt
-                          ? "text-white"
-                          : "bg-surface border border-border text-ink-2 hover:bg-surface-alt"
+                        "px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all font-display",
+                        sort === opt
+                          ? "bg-[#C5F135] text-[#070E07] lime-glow"
+                          : "glass text-white/70 hover:text-white"
                       )}
-                      style={sortBy === opt ? { backgroundColor: "#1C3520" } : undefined}
                     >
-                      {{ default: "Par défaut", price_asc: "Prix ↑", price_desc: "Prix ↓", rating: "Mieux notés" }[opt]}
+                      {{ default:"Par défaut", price_asc:"Prix ↑", price_desc:"Prix ↓", rating:"Mieux notés" }[opt]}
                     </button>
                   ))}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        {/* ── Categories ──────────────────────────────────── */}
-        <div className="px-4 md:px-8">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {CATEGORIES.map(cat => {
-              const Icon = cat.icon;
-              const active = activeCategory === cat.id;
+          {/* Category chips */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.18 }}
+            className="flex gap-2 overflow-x-auto no-scroll pb-2"
+          >
+            {CATS.map(c => {
+              const Icon = c.icon;
+              const active = cat === c.id;
               return (
                 <motion.button
-                  key={cat.id}
-                  whileTap={{ scale: 0.92 }}
-                  onClick={() => setActiveCategory(cat.id)}
+                  key={c.id}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setCat(c.id)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2.5 rounded-2xl shrink-0 cursor-pointer transition-all",
-                    "font-display text-sm font-bold",
+                    "flex items-center gap-2 px-4 py-2.5 rounded-full shrink-0 cursor-pointer",
+                    "font-display text-xs font-bold transition-all duration-200",
                     active
-                      ? "text-white shadow-md"
-                      : "text-ink-2 hover:bg-surface"
+                      ? "bg-[#C5F135] text-[#070E07] lime-glow"
+                      : "glass text-white/70 hover:text-white hover:bg-white/12"
                   )}
-                  style={active
-                    ? { backgroundColor: "#1C3520" }
-                    : { backgroundColor: cat.lightBg }
-                  }
                 >
-                  <Icon
-                    size={15}
-                    strokeWidth={active ? 2.5 : 2}
-                    style={{ color: active ? "#ADDA3B" : cat.color }}
-                  />
-                  {cat.label}
+                  <Icon size={13} strokeWidth={active ? 2.5 : 2} style={active ? {} : { color: c.color }} />
+                  {c.label}
                 </motion.button>
               );
             })}
-          </div>
+          </motion.div>
         </div>
+      </section>
 
-        {/* ── Section header ──────────────────────────────── */}
-        <div className="px-4 md:px-8 mt-7 mb-4 flex items-center justify-between">
-          <div>
-            <h2 className="font-display text-lg font-black text-ink">
-              {query ? `"${query}"` : activeLabel}
-            </h2>
-            <p className="text-xs text-muted mt-0.5">
-              {filtered.length} produit{filtered.length !== 1 ? "s" : ""}
-            </p>
+      {/* ── Content (light) ──────────────────────────────── */}
+      <section className="bg-surface rounded-t-3xl -mt-3 relative z-10 min-h-[60vh]">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6 pb-32 md:pb-12">
+
+          {/* Section header */}
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="font-display text-lg font-black text-ink">
+                {query
+                  ? `"${query}"`
+                  : activeCat.id === "all" ? "Toutes les offres" : activeCat.label
+                }
+              </h2>
+              <p className="text-xs text-muted mt-0.5">
+                {filtered.length} produit{filtered.length !== 1 ? "s" : ""}
+                {cartCount > 0 && ` · ${cartCount} dans le panier`}
+              </p>
+            </div>
+            {cartCount > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-xs font-bold text-white px-3 py-1.5 rounded-xl
+                           font-display bg-[#0E2A0E]"
+              >
+                {formatPrice(cartTotal)}
+              </motion.div>
+            )}
           </div>
-          {cartCount > 0 && (
-            <motion.div
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-xs font-bold text-surface px-3 py-1.5 rounded-xl font-display"
-              style={{ backgroundColor: "#1C3520" }}
-            >
-              {formatPrice(cartTotal)}
-            </motion.div>
-          )}
-        </div>
 
-        {/* ── Product Grid ────────────────────────────────── */}
-        <div className="px-4 md:px-8">
+          {/* Grid */}
           <AnimatePresence mode="popLayout">
             {filtered.length > 0 ? (
               <motion.div
                 key="grid"
                 className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
               >
-                {filtered.map((product, i) => (
+                {filtered.map((p, i) => (
                   <motion.div
-                    key={product.id}
+                    key={p.id}
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                    transition={{ delay: i * 0.035, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <ProductCard
-                      product={product}
-                      quantity={cart[product.id] || 0}
-                      onAdd={() => addToCart(product.id)}
-                      onRemove={() => removeFromCart(product.id)}
+                      product={p}
+                      qty={cart[p.id] || 0}
+                      onAdd={() => addToCart(p.id)}
+                      onRemove={() => removeFromCart(p.id)}
                     />
                   </motion.div>
                 ))}
@@ -489,88 +499,82 @@ export default function MarchePage() {
             ) : (
               <motion.div
                 key="empty"
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center py-20 text-center"
+                className="flex flex-col items-center py-20 text-center"
               >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: "#EEF3EE" }}
-                >
-                  <Package size={28} strokeWidth={1.5} style={{ color: "#1C3520" }} />
+                <div className="w-16 h-16 rounded-2xl bg-[#EEF4EE] flex items-center justify-center mb-4">
+                  <Package size={28} strokeWidth={1.5} className="text-[#0E2A0E]" />
                 </div>
-                <p className="font-display font-black text-base text-ink">
-                  Aucun produit trouvé
-                </p>
-                <p className="text-sm text-muted mt-1 max-w-[220px]">
-                  Essayez une autre recherche ou catégorie
+                <p className="font-display font-black text-base text-ink">Aucun résultat</p>
+                <p className="text-sm text-muted mt-1 max-w-[200px]">
+                  Essayez une autre recherche
                 </p>
                 <button
-                  onClick={() => { setQuery(""); setActiveCategory("all"); }}
-                  className="mt-5 px-5 py-2.5 rounded-xl text-sm font-bold text-white font-display cursor-pointer"
-                  style={{ backgroundColor: "#1C3520" }}
+                  onClick={() => { setQuery(""); setCat("all"); }}
+                  className="mt-5 px-5 py-2.5 rounded-xl text-sm font-bold font-display
+                             bg-[#0E2A0E] text-[#C5F135] cursor-pointer hover:bg-[#1a4a1a] transition-colors"
                 >
-                  Voir tout
+                  Tout afficher
                 </button>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </section>
 
-      {/* ── Cart bar (mobile, when cart not empty) ─────────── */}
+      {/* ── Floating cart bar ────────────────────────────── */}
       <AnimatePresence>
         {cartCount > 0 && (
           <motion.div
-            initial={{ y: 80, opacity: 0 }}
+            initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 35 }}
-            className="fixed bottom-20 md:bottom-6 inset-x-4 md:inset-x-auto md:right-8 md:left-auto md:w-80 z-40"
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 420, damping: 36 }}
+            className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-8 md:w-72 z-40"
           >
-            <button
-              className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-white cursor-pointer
-                         shadow-[0_8px_32px_rgba(28,53,32,0.35)]"
-              style={{ backgroundColor: "#1C3520" }}
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className="w-7 h-7 rounded-xl font-black text-sm flex items-center justify-center font-display"
-                  style={{ backgroundColor: "#ADDA3B", color: "#1C3520" }}
-                >
-                  {cartCount}
-                </span>
-                <span className="font-display font-bold text-sm">Voir mon panier</span>
-              </div>
-              <span className="font-display font-black text-sm">{formatPrice(cartTotal)}</span>
-            </button>
+            <Link href="/checkout">
+              <button className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer
+                                 bg-[#C5F135] text-[#070E07] font-display font-black
+                                 shadow-[0_8px_32px_rgba(197,241,53,0.35)]
+                                 hover:bg-[#9DC22A] transition-colors active:scale-[0.98]">
+                <div className="flex items-center gap-3">
+                  <span className="w-7 h-7 rounded-xl bg-[#070E07] text-[#C5F135] text-sm
+                                   flex items-center justify-center font-black">
+                    {cartCount}
+                  </span>
+                  <span className="text-sm">Commander</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm">{formatPrice(cartTotal)}</span>
+                  <ArrowRight size={15} strokeWidth={2.5} />
+                </div>
+              </button>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Mobile Bottom Nav ──────────────────────────────── */}
-      <nav className="fixed bottom-0 inset-x-0 md:hidden z-50 bg-surface/95 backdrop-blur-md border-t border-border safe-bottom">
+      {/* ── Mobile bottom nav ────────────────────────────── */}
+      <nav className="fixed bottom-0 inset-x-0 md:hidden z-50
+                      bg-canvas/90 backdrop-blur-xl border-t border-white/8 safe-b">
         <div className="flex items-center justify-around px-2 pt-2">
           {[
-            { icon: Home,         label: "Accueil",  href: "/" },
-            { icon: LayoutGrid,   label: "Marché",   href: "/marche",  active: true },
-            { icon: Heart,        label: "Favoris",  href: "/favoris" },
-            { icon: User,         label: "Compte",   href: "/compte" },
+            { icon: Home,       label: "Accueil", href: "/" },
+            { icon: LayoutGrid, label: "Marché",  href: "/marche",  active: true },
+            { icon: Heart,      label: "Favoris", href: "/favoris" },
+            { icon: User,       label: "Compte",  href: "/compte" },
           ].map(({ icon: Icon, label, href, active }) => (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-1 px-4 py-1 rounded-xl transition-colors cursor-pointer",
-                active ? "text-ink" : "text-muted hover:text-ink-2"
+                "flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl cursor-pointer transition-colors min-h-[44px] justify-center",
+                active ? "text-[#C5F135]" : "text-white/35 hover:text-white/60"
               )}
             >
-              <Icon
-                size={22}
-                strokeWidth={active ? 2.5 : 1.8}
-                style={active ? { color: "#1C3520" } : undefined}
-              />
-              <span className={cn("text-[10px] font-bold font-display", active ? "text-ink" : "")}>
+              <Icon size={21} strokeWidth={active ? 2.5 : 1.8} />
+              <span className={cn("text-[10px] font-bold font-display", active ? "" : "")}>
                 {label}
               </span>
             </Link>
