@@ -46,7 +46,7 @@ interface PaymentMethod {
   subtitle: string;
   color: string;
   bgColor: string;
-  icon: React.ElementType;
+  icon: React.FC<{ size?: number; strokeWidth?: number; style?: React.CSSProperties; className?: string }>;
   badge?: string;
 }
 

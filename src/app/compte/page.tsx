@@ -137,7 +137,7 @@ const MOCK_ADDRESSES: Address[] = [
 /* ─── Status helpers ──────────────────────────────────────── */
 const STATUS_CONFIG: Record<
   OrderStatus,
-  { color: string; bg: string; border: string; icon: React.ElementType }
+  { color: string; bg: string; border: string; icon: React.FC<{ size?: number; strokeWidth?: number; className?: string }> }
 > = {
   "En route": {
     color: "#3B82F6",
@@ -520,7 +520,7 @@ function SettingsTab() {
     key: keyof typeof toggles;
     label: string;
     sublabel: string;
-    icon: React.ElementType;
+    icon: React.FC<{ size?: number; strokeWidth?: number; className?: string }>;
   }[] = [
     {
       key: "pushNotifs",
