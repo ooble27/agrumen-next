@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
-import { Camera, Check, ImagePlus, Trash2 } from "lucide-react";
+import { Camera, ImagePlus, Trash2 } from "lucide-react";
 import { Sheet } from "./Sheet";
-import { AVATARS, Avatar, photoToDataUrl } from "./Avatar";
+import { Avatar, photoToDataUrl } from "./Avatar";
 import { haptic } from "@/lib/fx";
 import type { Profile } from "@/lib/store";
 
@@ -36,7 +35,7 @@ export function AvatarSheet({
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Ton avatar">
+    <Sheet open={open} onClose={onClose} title="Ta photo">
       <div className="flex justify-center py-2">
         <Avatar profile={profile} className="size-24 text-[28px] ring-4 ring-surface" />
       </div>
@@ -52,34 +51,6 @@ export function AvatarSheet({
       <input ref={gallery} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
       <input ref={camera} type="file" accept="image/*" capture="user" hidden onChange={(e) => pick(e.target.files?.[0])} />
       {error && <p className="mt-2 text-center text-[13px] text-[#ff5a5a]">{error}</p>}
-
-      <p className="mb-3 mt-6 px-1 text-[13px] font-semibold uppercase tracking-wider text-muted">Ou choisis une couleur</p>
-      <div className="grid grid-cols-4 gap-3 pb-2">
-        {AVATARS.map((id) => {
-          const on = profile.avatar === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              aria-label={`Avatar ${id.slice(1)}`}
-              aria-pressed={on}
-              onClick={() => {
-                haptic(8);
-                onChange(id);
-                onClose();
-              }}
-              className={`relative aspect-square rounded-full transition active:scale-90 ${on ? "ring-[3px] ring-orange ring-offset-2 ring-offset-bg" : ""}`}
-            >
-              <Image src={`/avatars/${id}.svg`} alt="" fill unoptimized className="rounded-full object-cover" />
-              {on && (
-                <span className="absolute -bottom-0.5 -right-0.5 grid size-6 place-items-center rounded-full bg-orange text-white ring-2 ring-bg">
-                  <Check className="size-3.5" strokeWidth={3} />
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
 
       {profile.avatar && (
         <button

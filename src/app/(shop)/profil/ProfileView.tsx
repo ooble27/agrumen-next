@@ -90,7 +90,7 @@ export function ProfileView() {
       {/* Carte d'identité */}
       <section className="mt-5 overflow-hidden rounded-[28px] bg-[#151515] p-5 text-white dark:bg-surface">
         <div className="flex items-center gap-4">
-          <button type="button" onClick={() => setSheet("avatar")} aria-label="Changer mon avatar" className="relative shrink-0 transition active:scale-95">
+          <button type="button" onClick={() => setSheet("avatar")} aria-label="Changer ma photo" className="relative shrink-0 transition active:scale-95">
             <Avatar profile={profile} className="size-[68px] text-[22px] ring-[3px] ring-white/15" />
             <span className="absolute -bottom-0.5 -right-0.5 grid size-7 place-items-center rounded-full bg-white text-[#151515] ring-[3px] ring-[#151515] dark:ring-surface">
               <Camera className="size-3.5" strokeWidth={2.2} />

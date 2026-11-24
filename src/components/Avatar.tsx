@@ -4,7 +4,8 @@ import Image from "next/image";
 import { User } from "lucide-react";
 import type { Profile } from "@/lib/store";
 
-export const AVATARS = Array.from({ length: 12 }, (_, i) => `a${i + 1}`);
+/** Avatars prêts à choisir : aucun pour l’instant (série en préparation). */
+export const AVATARS: string[] = [];
 
 export function avatarSrc(id?: string) {
   if (!id) return null;
