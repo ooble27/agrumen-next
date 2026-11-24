@@ -92,7 +92,7 @@ export function ProductView({ product, related }: { product: Product; related: P
 
       {/* Barre compacte qui apparaît en défilant (mobile) */}
       <div
-        className={`fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-all duration-500 [transition-timing-function:var(--ease-out)] lg:hidden ${
+        className={`fixed inset-x-0 top-0 z-40 border-b border-line bg-bg pt-[env(safe-area-inset-top)] transition-all duration-500 [transition-timing-function:var(--ease-out)] lg:hidden ${
           compact ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >

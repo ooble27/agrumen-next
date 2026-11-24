@@ -206,5 +206,44 @@ D["the-glace"] = drink([[0, "#d98b3a"], [1, "#7a3b12"]], (a) => {
   mint(a, 150, 108, 0.5, -60);
 }, "#1f1f1f");
 
+
+D["degue"] = () => {
+  const a = new Art();
+  const R = L.rng(42);
+  const cx = 200, base = 340, top = 118, rt = 92, rb = 70;
+  a.shadow(cx, base + 6, rt * 1.05, 11, 0.3);
+  // gobelet transparent
+  a.add(`<path d="M${cx - rt} ${top} L ${cx - rb} ${base - 8} Q ${cx} ${base + 6} ${cx + rb} ${base - 8} L ${cx + rt} ${top} Z" fill="#ffffff" fill-opacity=".2"/>`);
+  // dégué crémeux
+  const lt = top + 34;
+  a.add(`<path d="M${cx - rt * 0.96} ${lt} L ${cx - rb + 3} ${base - 10} Q ${cx} ${base + 2} ${cx + rb - 3} ${base - 10} L ${cx + rt * 0.96} ${lt} Z" fill="${a.g(lin([[0, "#fffaf0"], [1, "#f1e2c4"]]))}"/>`);
+  // grains de mil visibles contre la paroi
+  let beads = "";
+  for (let i = 0; i < 150; i++) {
+    const t = R(), y = lt + 8 + t * (base - lt - 22);
+    const half = (rt * 0.94) - ((rt - rb) * (y - top)) / (base - top);
+    const x = cx + (R() * 2 - 1) * half * 0.95;
+    beads += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(2.2 + R() * 1.8)}" fill="${R() > 0.25 ? "#e9c77d" : "#d4a24e"}" opacity="${f(0.55 + R() * 0.4)}"/>`;
+  }
+  a.add(beads);
+  // dessus bombé avec tourbillon de crème
+  a.add(`<ellipse cx="${cx}" cy="${lt}" rx="${rt * 0.96}" ry="16" fill="#fffdf7"/>`);
+  a.add(`<path d="M${cx - 60} ${lt - 2} C ${cx - 30} ${lt - 44} ${cx + 34} ${lt - 46} ${cx + 58} ${lt - 4} Z" fill="#fffdf7"/>`);
+  a.add(`<path d="M${cx - 34} ${lt - 14} C ${cx - 10} ${lt - 34} ${cx + 22} ${lt - 34} ${cx + 36} ${lt - 16}" stroke="#efe2c8" stroke-width="5" fill="none" stroke-linecap="round"/>`);
+  // garnitures : grains, raisins, gousse de vanille
+  let top2 = "";
+  for (let i = 0; i < 26; i++) top2 += `<circle cx="${f(cx - 50 + R() * 100)}" cy="${f(lt - 4 - R() * 26)}" r="${f(2.4 + R() * 1.6)}" fill="#e2b866"/>`;
+  a.add(top2);
+  a.add(`<ellipse cx="${cx - 22}" cy="${lt - 22}" rx="7" ry="5" fill="#6b2e2e"/><ellipse cx="${cx + 18}" cy="${lt - 28}" rx="6" ry="4.5" fill="#7a3434"/><ellipse cx="${cx + 4}" cy="${lt - 12}" rx="6" ry="4.5" fill="#6b2e2e"/>`);
+  a.add(`<path d="M${cx + 40} ${lt - 40} q 30 -10 52 -40" stroke="#3b2414" stroke-width="7" stroke-linecap="round" fill="none"/>`);
+  // cuillère
+  a.add(`<path d="M${cx - 20} ${lt - 20} L ${cx - 86} ${top - 70}" stroke="#e7ecef" stroke-width="10" stroke-linecap="round"/><ellipse cx="${cx - 16}" cy="${lt - 16}" rx="16" ry="10" fill="#f6f8f9" transform="rotate(54 ${cx - 16} ${lt - 16})"/>`);
+  // paroi et reflets
+  a.add(`<path d="M${cx - rt} ${top} L ${cx - rb} ${base - 8} Q ${cx} ${base + 6} ${cx + rb} ${base - 8} L ${cx + rt} ${top}" fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="3"/>`);
+  a.add(`<path d="M${cx - rt * 0.8} ${top + 26} L ${cx - rb * 0.78} ${base - 26}" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".55"/>`);
+  a.add(`<ellipse cx="${cx}" cy="${top}" rx="${rt}" ry="12" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="3"/>`);
+  return a;
+};
+
 for (const [name, fn] of Object.entries(D)) fs.writeFileSync(`${out}/${name}.svg`, fn().svg());
 console.log(Object.keys(D).length, "illustrations");

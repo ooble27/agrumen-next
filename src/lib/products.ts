@@ -1,6 +1,6 @@
 export type Tint = "green" | "teal" | "blue" | "olive" | "peach" | "rose";
 
-export type Category = "nems" | "samoussas" | "raviolis" | "plats" | "boissons";
+export type Category = "nems" | "samoussas" | "raviolis" | "plats" | "desserts" | "boissons";
 
 export type Choice = { id: string; label: string; price?: number };
 
@@ -36,6 +36,7 @@ export const CATEGORIES: { id: "all" | Category; label: string }[] = [
   { id: "samoussas", label: "Samoussas" },
   { id: "raviolis", label: "Raviolis" },
   { id: "plats", label: "Plats" },
+  { id: "desserts", label: "Desserts" },
   { id: "boissons", label: "Boissons" },
 ];
 
@@ -114,6 +115,37 @@ const SIZE: OptionGroup = {
   choices: [
     { id: "500", label: "500 ml" },
     { id: "1l", label: "1 L", price: 2.5 },
+  ],
+};
+
+const SAVEUR_DEGUE: OptionGroup = {
+  id: "saveur",
+  title: "Saveur",
+  type: "one",
+  choices: [
+    { id: "vanille", label: "Vanille" },
+    { id: "nature", label: "Nature" },
+    { id: "coco", label: "Noix de coco", price: 0.5 },
+  ],
+};
+
+const FORMAT_DEGUE: OptionGroup = {
+  id: "format",
+  title: "Format",
+  type: "one",
+  choices: [
+    { id: "250", label: "250 ml" },
+    { id: "500", label: "500 ml", price: 3 },
+  ],
+};
+
+const EXTRAS_DEGUE: OptionGroup = {
+  id: "extras",
+  title: "Suppléments",
+  type: "many",
+  choices: [
+    { id: "raisins", label: "Raisins secs", price: 0.5 },
+    { id: "lait", label: "Lait concentré sucré", price: 0.75 },
   ],
 };
 
@@ -256,6 +288,22 @@ export const PRODUCTS: Product[] = [
     rating: 4.5,
     reviews: "100+",
     description: "Pommes de terre fraîches, coupées à la main, sel de mer. Ketchup ou mayonnaise.",
+  },
+  {
+    slug: "degue",
+    name: "Dégué",
+    short: "Mil et lait caillé, bien frais",
+    category: "desserts",
+    price: 5.49,
+    portion: "250 ml",
+    image: "/food/degue.svg",
+    tint: "peach",
+    rating: 4.9,
+    reviews: "90+",
+    description:
+      "Dessert d’Afrique de l’Ouest : petits grains de mil roulés à la main, mélangés à du lait caillé sucré et parfumé à la vanille. Servi bien frais.",
+    options: [SAVEUR_DEGUE, FORMAT_DEGUE, EXTRAS_DEGUE],
+    popular: true,
   },
   {
     slug: "limonade-fraise",

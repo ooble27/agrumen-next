@@ -27,6 +27,7 @@ const TABS: Tab[] = [
   { id: "samoussas", label: "Samoussas", icon: "/food/samoussas.svg" },
   { id: "raviolis", label: "Raviolis", icon: "/food/raviolis-vapeur.svg" },
   { id: "plats", label: "Plats", icon: "/food/riz-cantonais.svg" },
+  { id: "desserts", label: "Desserts", icon: "/food/degue.svg" },
   { id: "boissons", label: "Boissons", icon: "/food/limonade-fraise.svg" },
 ];
 
@@ -294,7 +295,7 @@ export function MenuView() {
 
           <div className="mt-4 space-y-10">
             {sections.map((s, i) => (
-              <section key={s.id} id={`sec-${s.id}`} className="scroll-mt-32 [contain-intrinsic-size:auto_600px] [content-visibility:auto]">
+              <section key={s.id} id={`sec-${s.id}`} className="scroll-mt-32">
                 <div className="mb-4 flex items-end justify-between">
                   <div>
                     <h2 className="text-[22px] font-medium tracking-tight">{s.id === "popular" ? "Les plus populaires" : s.label}</h2>
@@ -306,6 +307,8 @@ export function MenuView() {
                 <Grid items={s.items} priority={i === 0} />
               </section>
             ))}
+            {/* espace pour que la dernière catégorie puisse remonter en haut */}
+            <div aria-hidden className="h-[45vh]" />
           </div>
         </>
       )}

@@ -16,7 +16,7 @@ export function CartView() {
   const t = computeTotals(subtotal, "delivery", 0);
   const missing = SITE.freeDeliveryFrom - subtotal;
   const inCart = new Set(lines.map((l) => l.slug));
-  const suggestions = PRODUCTS.filter((p) => !inCart.has(p.slug) && (p.category === "boissons" || p.slug === "frites")).slice(0, 5);
+  const suggestions = PRODUCTS.filter((p) => !inCart.has(p.slug) && (p.category === "boissons" || p.category === "desserts" || p.slug === "frites")).slice(0, 5);
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-40 pt-[max(16px,env(safe-area-inset-top))] lg:pt-8">
