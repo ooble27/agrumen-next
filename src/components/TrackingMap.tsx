@@ -13,7 +13,7 @@ const HOME = `<svg viewBox="0 0 36 46" width="36" height="46" xmlns="http://www.
 const VAN = `<div class="van" style="width:96px;height:96px;will-change:transform"><img src="/vehicles/van-day.png" alt="" class="van-day" style="width:100%;height:100%"/><img src="/vehicles/van-night.png" alt="" class="van-night" style="width:100%;height:100%"/></div>`;
 
 /** Trajet par les vraies rues (OSRM, OpenStreetMap) ; repli sur une courbe si le service ne répond pas. */
-async function fetchRoute(a: Pt, b: Pt): Promise<[number, number][]> {
+export async function fetchRoute(a: Pt, b: Pt): Promise<[number, number][]> {
   const key = `nemsy-route:${a.lat.toFixed(4)},${a.lon.toFixed(4)}>${b.lat.toFixed(4)},${b.lon.toFixed(4)}`;
   try {
     const cached = sessionStorage.getItem(key);

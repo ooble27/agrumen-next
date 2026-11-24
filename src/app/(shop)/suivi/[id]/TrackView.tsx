@@ -11,6 +11,7 @@ import { useOrders } from "@/lib/store";
 import { useNow } from "@/lib/now";
 import { courierFor, destination, rideWindow, trackOrder } from "@/lib/tracking";
 import { TrackingMap } from "@/components/TrackingMap";
+import { TrackingMap3D } from "@/components/TrackingMap3D";
 import { MapView } from "@/components/MapView";
 
 const time = (ts: number) => new Date(ts).toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
@@ -21,6 +22,7 @@ export function TrackView({ id }: { id: string }) {
   const now = useNow();
   const [details, setDetails] = useState(false);
   const [rating, setRating] = useState(0);
+  const [flat, setFlat] = useState(false);
 
   if (!order || !now) {
     return (
@@ -52,7 +54,11 @@ export function TrackView({ id }: { id: string }) {
         {pickup ? (
           <MapView lat={SITE.store.lat} lon={SITE.store.lon} className="h-full w-full" />
         ) : (
+          flat ? (
           <TrackingMap from={SITE.store} to={to} ride={rideWindow(order)} className="h-full w-full" />
+        ) : (
+          <TrackingMap3D from={SITE.store} to={to} ride={rideWindow(order)} onFail={() => setFlat(true)} className="h-full w-full" />
+        )
         )}
         <div className="absolute inset-x-0 top-0 z-[500] flex items-center justify-between px-4 pt-[max(14px,env(safe-area-inset-top))]">
           <button
