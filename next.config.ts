@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Transitions natives entre les pages (React <ViewTransition>)
+    viewTransition: true,
+  },
   async headers() {
     return [
       {

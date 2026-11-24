@@ -45,6 +45,7 @@ export default function Welcome() {
 
           <Link
             href="/menu"
+            transitionTypes={["nav-forward"]}
             className="rise group mt-10 hidden h-16 items-center gap-5 rounded-full bg-[#151515] py-2 pl-8 pr-2 text-[17px] font-medium text-white transition-all hover:gap-7 lg:inline-flex dark:bg-white dark:text-[#151515] [animation-delay:200ms]"
           >
             Commander maintenant
@@ -61,19 +62,15 @@ export default function Welcome() {
             style={{ background: "var(--splash-blob)" }}
           />
           {/* petits plats flous qui flottent */}
-          <Image src="/food/samoussas.webp" alt="" width={140} height={140} className="food absolute bottom-[26%] left-0 w-[92px] -rotate-12 blur-[2px] lg:bottom-[2%] lg:left-[6%] lg:w-[110px]" />
-          <Image src="/food/nems-poulet.webp" alt="" width={120} height={120} className="food absolute bottom-[6%] left-[18%] w-[64px] rotate-12 blur-[3px] lg:bottom-[10%]" />
-          <Image
-            src="/food/nems-poulet.webp"
-            alt="Nems croustillants"
-            width={820}
-            height={820}
-            priority
-            className="food rise absolute right-[-4%] top-0 w-[92%] max-w-[520px] rotate-[-6deg] lg:right-[-8%] lg:w-[110%] lg:max-w-none [animation-delay:150ms]"
-          />
+          <Image src="/food/samoussas.webp" alt="" width={140} height={140} className="food drift absolute bottom-[26%] left-0 w-[92px] -rotate-12 blur-[2px] lg:bottom-[2%] lg:left-[6%] lg:w-[110px]" />
+          <Image src="/food/nems-poulet.webp" alt="" width={120} height={120} className="food drift [animation-delay:-3s] absolute bottom-[6%] left-[18%] w-[64px] rotate-12 blur-[3px] lg:bottom-[10%]" />
+          <span className="rise absolute right-[-4%] top-0 w-[92%] max-w-[520px] lg:right-[-8%] lg:w-[110%] lg:max-w-none [animation-delay:150ms]">
+            <Image src="/food/nems-poulet.webp" alt="Nems croustillants" width={820} height={820} priority className="food float h-auto w-full" />
+          </span>
           <Link
             href="/menu"
-            className="group absolute inset-x-10 bottom-[max(22px,env(safe-area-inset-bottom))] z-10 flex h-16 items-center justify-between rounded-full bg-white py-2 pl-7 pr-2 text-[17px] font-medium text-[#151515] shadow-[0_18px_40px_-18px_rgba(0,0,0,.5)] lg:hidden"
+            transitionTypes={["nav-forward"]}
+            className="group press absolute inset-x-10 bottom-[max(22px,env(safe-area-inset-bottom))] z-10 flex h-16 items-center justify-between rounded-full bg-white py-2 pl-7 pr-2 text-[17px] font-medium text-[#151515] shadow-[0_18px_40px_-18px_rgba(0,0,0,.5)] lg:hidden"
           >
             Commander maintenant
             <span className="grid size-12 place-items-center rounded-full bg-[#151515] text-white transition group-active:scale-95">

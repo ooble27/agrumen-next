@@ -81,10 +81,13 @@ export function useCart() {
 export const cartActions = {
   add(slug: string, qty = 1, options: string[] = [], note?: string) {
     const key = lineKey(slug, options);
-    cartStore.set((c) => ({
-      ...c,
-      [key]: { slug, options, note: note || c[key]?.note, qty: (c[key]?.qty ?? 0) + qty },
-    }));
+    cartStore.set((c) => {
+      const next = { ...c };
+      const q = (c[key]?.qty ?? 0) + qty;
+      if (q <= 0) delete next[key];
+      else next[key] = { slug, options, note: note || c[key]?.note, qty: q };
+      return next;
+    });
   },
   setQty(key: string, qty: number) {
     cartStore.set((c) => {

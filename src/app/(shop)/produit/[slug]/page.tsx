@@ -1,3 +1,4 @@
+import { PageTransition } from "@/components/PageTransition";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PRODUCTS, getProduct, relatedProducts } from "@/lib/products";
@@ -17,5 +18,9 @@ export default async function ProductPage(props: PageProps<"/produit/[slug]">) {
   const { slug } = await props.params;
   const product = getProduct(slug);
   if (!product) notFound();
-  return <ProductView product={product} related={relatedProducts(product)} />;
+  return (
+    <PageTransition>
+      <ProductView product={product} related={relatedProducts(product)} />
+    </PageTransition>
+  );
 }

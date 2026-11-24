@@ -6,8 +6,10 @@ import { PRODUCTS, defaultOptions } from "@/lib/products";
 import { SITE } from "@/lib/site";
 import { pad, price } from "@/lib/format";
 import { cartActions, computeTotals, useCart } from "@/lib/store";
+import { haptic } from "@/lib/fx";
 import { PageHeader } from "@/components/Header";
 import { Food } from "@/components/Food";
+import { SwipeRow } from "@/components/SwipeRow";
 
 export function CartView() {
   const { lines, subtotal } = useCart();
@@ -35,8 +37,10 @@ export function CartView() {
         <>
           <ul className="mt-6 flex flex-col gap-4">
             {lines.map((l) => (
-              <li key={l.key} className="flex items-center gap-4">
-                <Link href={`/produit/${l.slug}`} className={`tint-${l.product.tint} grid size-[104px] shrink-0 place-items-center rounded-[22px] p-2`}>
+              <li key={l.key}>
+                <SwipeRow onDelete={() => cartActions.setQty(l.key, 0)}>
+                <div className="flex items-center gap-4">
+                <Link href={`/produit/${l.slug}`} transitionTypes={["nav-forward"]} className={`tint-${l.product.tint} grid size-[104px] shrink-0 place-items-center rounded-[22px] p-2`}>
                   <Food src={l.product.image} alt={l.product.name} sizes="104px" className="size-full" />
                 </Link>
                 <div className="min-w-0 flex-1">
@@ -66,9 +70,12 @@ export function CartView() {
                     <Minus className="size-4" strokeWidth={2.4} />
                   </button>
                 </div>
+                </div>
+                </SwipeRow>
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-center text-[12px] text-faint lg:hidden">Glissez une ligne vers la gauche pour la retirer</p>
 
           {/* Suggestions */}
           {suggestions.length > 0 && (
@@ -86,7 +93,14 @@ export function CartView() {
                       <button
                         type="button"
                         aria-label={`Ajouter ${p.name}`}
-                        onClick={() => cartActions.add(p.slug, 1, defaultOptions(p))}
+                        onClick={(e) => {
+                      cartActions.add(p.slug, 1, defaultOptions(p));
+                      haptic();
+                      e.currentTarget.closest("div.relative")?.animate(
+                        [{ transform: "scale(1)" }, { transform: "scale(.94)" }, { transform: "scale(1)" }],
+                        { duration: 350, easing: "ease-out" },
+                      );
+                    }}
                         className="grid size-9 place-items-center rounded-[12px] bg-plus text-plus-fg transition active:scale-90"
                       >
                         <Plus className="size-[18px]" strokeWidth={1.8} />

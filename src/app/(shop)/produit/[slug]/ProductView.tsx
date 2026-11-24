@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Check, Clock, Heart, Minus, Plus, Star } from "lucide-react";
+import { useEffect, useRef, useState, ViewTransition } from "react";
+import { Check, ChevronLeft, Clock, Heart, Minus, Plus, ShoppingBag, Star } from "lucide-react";
 import { defaultOptions, unitPrice, type Product } from "@/lib/products";
 import { ETA } from "@/lib/site";
 import { pad, price } from "@/lib/format";
-import { cartActions, toggleFavorite, useFavorites } from "@/lib/store";
+import { cartActions, toggleFavorite, useCart, useFavorites } from "@/lib/store";
+import { flyToCart, haptic, toast, useCartBump } from "@/lib/fx";
 import { PageHeader } from "@/components/Header";
 import { Food } from "@/components/Food";
 import { Checkbox, Radio } from "@/components/Option";
@@ -20,6 +21,18 @@ export function ProductView({ product, related }: { product: Product; related: P
   const [added, setAdded] = useState(false);
   const fav = useFavorites().includes(product.slug);
   const unit = unitPrice(product, options);
+  const { count } = useCart();
+  const bump = useCartBump();
+  const foodRef = useRef<HTMLSpanElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const compact = scrollY > 300;
+  const back = () => (window.history.length > 1 ? router.back() : router.push("/menu"));
 
   const pick = (groupId: string, choiceId: string, single: boolean) => {
     const key = `${groupId}.${choiceId}`;
@@ -30,9 +43,33 @@ export function ProductView({ product, related }: { product: Product; related: P
 
   const add = () => {
     cartActions.add(product.slug, qty, options, note.trim());
+    flyToCart(foodRef.current);
     setAdded(true);
-    window.setTimeout(() => router.push("/panier"), 420);
+    window.setTimeout(() => setAdded(false), 1400);
+    toast({
+      title: `${qty} × ${product.name} ajouté${qty > 1 ? "s" : ""}`,
+      image: product.image,
+      action: { label: "Voir le panier", run: () => router.push("/panier", { transitionTypes: ["nav-forward"] } as never) },
+    });
+    setQty(1);
   };
+
+  const cartButton = (
+    <Link
+      href="/panier"
+      transitionTypes={["nav-forward"]}
+      data-cart-target=""
+      aria-label={`Panier, ${count} article${count > 1 ? "s" : ""}`}
+      className="relative grid size-12 place-items-center rounded-full bg-surface text-ink transition active:scale-90"
+    >
+      <ShoppingBag className="size-[21px]" strokeWidth={1.6} />
+      {count > 0 && (
+        <span key={bump} className="bump absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1 text-[11px] font-semibold text-white">
+          {count}
+        </span>
+      )}
+    </Link>
+  );
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-6xl pb-40 lg:grid lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-14 lg:px-8 lg:pb-16 lg:pt-8">
@@ -40,18 +77,46 @@ export function ProductView({ product, related }: { product: Product; related: P
       <section className={`tint-${product.tint} relative rounded-b-[44px] px-5 pb-8 pt-[max(14px,env(safe-area-inset-top))] lg:sticky lg:top-[100px] lg:rounded-[44px] lg:pt-5`}>
         <div className="relative">
           <PageHeader title={product.name} />
-          <button
-            type="button"
-            onClick={() => toggleFavorite(product.slug)}
-            aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
-            aria-pressed={fav}
-            className="absolute right-0 top-1 grid size-12 place-items-center rounded-full bg-surface text-ink transition active:scale-95"
-          >
-            <Heart className={`size-5 ${fav ? "fill-[#ff4d4d] text-[#ff4d4d]" : ""}`} strokeWidth={1.7} />
-          </button>
+          <div className="absolute right-0 top-1">{cartButton}</div>
         </div>
-        <Food src={product.image} alt={product.name} priority sizes="(min-width: 1024px) 520px, 90vw" className="rise mx-auto mt-6 aspect-[1/0.78] w-[74%] max-w-[440px]" />
+        <span
+          ref={foodRef}
+          className="block will-change-transform"
+          style={{ transform: `translateY(${Math.min(scrollY, 400) * 0.28}px)`, opacity: 1 - Math.min(scrollY, 400) / 520 }}
+        >
+          <ViewTransition name={`food-${product.slug}`} share="morph">
+            <Food src={product.image} alt={product.name} priority sizes="(min-width: 1024px) 520px, 90vw" className="mx-auto mt-6 aspect-[1/0.78] w-[74%] max-w-[440px]" />
+          </ViewTransition>
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            haptic(8);
+            toggleFavorite(product.slug);
+          }}
+          aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
+          aria-pressed={fav}
+          className="absolute -bottom-6 right-6 z-10 grid size-14 place-items-center rounded-full bg-bg text-ink shadow-[var(--shadow-soft)] transition active:scale-90"
+        >
+          <Heart key={String(fav)} className={`size-6 ${fav ? "bump fill-[#ff4d4d] text-[#ff4d4d]" : ""}`} strokeWidth={1.6} />
+        </button>
       </section>
+
+      {/* Barre compacte qui apparaît en défilant (mobile) */}
+      <div
+        className={`fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-all duration-500 [transition-timing-function:var(--ease-out)] lg:hidden ${
+          compact ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
+        }`}
+      >
+        <div className="flex h-16 items-center gap-3 px-4">
+          <button type="button" onClick={back} aria-label="Retour" className="grid size-11 place-items-center rounded-full bg-surface active:scale-90">
+            <ChevronLeft className="size-5" strokeWidth={1.8} />
+          </button>
+          <p className="flex-1 truncate text-center text-[17px] font-medium">{product.name}</p>
+          <span className="scale-90">{cartButton}</span>
+        </div>
+      </div>
+
 
       {/* Infos */}
       <section className="px-6 pt-7 lg:px-0 lg:pt-2">
