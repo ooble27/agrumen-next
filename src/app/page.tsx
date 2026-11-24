@@ -1,5 +1,8 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { Onboarding } from "./Onboarding";
+
+export const metadata: Metadata = { title: { absolute: "Nemsy — Nems livrés tout chauds" } };
 
 export default function Home() {
-  redirect("/marche");
+  return <Onboarding />;
 }

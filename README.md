@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nemsy
 
-## Getting Started
+Application web de commande de nems et snacks, livrés au Canada. Mobile-first, avec un thème clair et un thème sombre. Prix en dollars canadiens, taxes TPS + TVQ.
 
-First, run the development server:
+## Démarrer
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Écran |
+| --- | --- |
+| `/` | Présentation en 3 écrans (au premier lancement) |
+| `/menu` | Recherche, tri, promos, catégories, sections du menu |
+| `/produit/[slug]` | Fiche produit : options, suppléments, instructions |
+| `/panier` | Panier et suggestions |
+| `/paiement` | Livraison ou cueillette, heure, paiement, pourboire |
+| `/confirmation` | Commande confirmée et suivi |
+| `/favoris`, `/profil` | Favoris, historique, coordonnées, thème |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Personnaliser
 
-## Learn More
+- **Nom, ville, numéro WhatsApp, frais, taxes, horaires** : `src/lib/site.ts`
+- **Produits, prix, options** : `src/lib/products.ts`
+- **Illustrations des plats** : `public/food/*.svg`, générées par `tools/illustrations` (voir son README)
+- **Couleurs des deux thèmes** : `src/app/globals.css`
+- **Logo** : `public/logo.svg`. Les icônes de l'app installable sont dans `public/icons` et `src/app/apple-icon.png`.
 
-To learn more about Next.js, take a look at the following resources:
+## App installable (PWA)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Sur iPhone : Safari → Partager → « Sur l'écran d'accueil ». Sur Android : Chrome → « Installer l'application ». Le service worker (`public/sw.js`) garde le menu et les images en cache pour un chargement instantané. Le zoom est désactivé.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Les commandes sont envoyées sur WhatsApp au numéro défini dans `SITE.whatsapp`.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
