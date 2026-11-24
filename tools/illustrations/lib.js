@@ -59,7 +59,6 @@ class Art {
 /* ---------- vaisselle ---------- */
 function plate(a, cx, cy, rx, ry, tone = "#ffffff") {
   a.shadow(cx, cy + ry * 0.55, rx * 0.95, ry * 0.55, 0.28);
-  a.add(`<ellipse cx="${cx}" cy="${cy + ry * 0.12}" rx="${rx}" ry="${ry}" fill="${a.g(lin([[0, "#dfe5e8"], [1, "#b9c3c8"]]))}"/>`);
   a.add(`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${a.g(lin([[0, tone], [1, "#eef2f4"]]))}"/>`);
   a.add(`<ellipse cx="${cx}" cy="${cy + ry * 0.06}" rx="${rx * 0.74}" ry="${ry * 0.7}" fill="${a.g(lin([[0, "#e9eef1"], [1, "#ffffff"]]))}"/>`);
   a.add(`<path d="M${cx - rx * 0.86} ${cy - ry * 0.2} A${rx} ${ry} 0 0 1 ${cx - rx * 0.2} ${cy - ry * 0.97}" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>`);
@@ -77,7 +76,6 @@ function bowl(a, cx, cy, w, h, color = "#ffffff", inner = "#f1f4f6") {
 
 function dip(a, cx, cy, r, sauce, sauce2) {
   a.shadow(cx, cy + r * 0.62, r * 1.0, r * 0.32, 0.25);
-  a.add(`<ellipse cx="${cx}" cy="${cy + r * 0.18}" rx="${r}" ry="${r * 0.52}" fill="${a.g(lin([[0, "#e4e9ec"], [1, "#b8c2c7"]]))}"/>`);
   a.add(`<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r * 0.46}" fill="#fff"/>`);
   a.add(`<ellipse cx="${cx}" cy="${cy + 2}" rx="${r * 0.78}" ry="${r * 0.33}" fill="${a.g(lin([[0, sauce2], [1, sauce]]))}"/>`);
   a.add(`<ellipse cx="${cx - r * 0.3}" cy="${cy - r * 0.05}" rx="${r * 0.22}" ry="${r * 0.07}" fill="#fff" opacity=".55"/>`);

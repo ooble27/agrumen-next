@@ -4,8 +4,8 @@ import Image from "next/image";
 import { User } from "lucide-react";
 import type { Profile } from "@/lib/store";
 
-/** Avatars prêts à choisir : aucun pour l’instant (série en préparation). */
-export const AVATARS: string[] = [];
+/** Avatars « Adventurer » (Lisa Wischofsky, CC BY 4.0) : public/avatars/adv-01…20.svg */
+export const AVATARS = Array.from({ length: 20 }, (_, i) => `adv-${String(i + 1).padStart(2, "0")}`);
 
 export function avatarSrc(id?: string) {
   if (!id) return null;
@@ -28,10 +28,6 @@ export function Avatar({ profile, className = "size-12" }: { profile: Partial<Pr
       {src ? (
         <>
           <Image src={src} alt="" fill unoptimized sizes="96px" className="object-cover" />
-          {/* initiales sur les dégradés (pas sur une photo) */}
-          {!profile.avatar?.startsWith("data:") && initials && (
-            <span className="relative text-[0.95em] font-semibold tracking-tight [text-shadow:0_1px_6px_rgba(0,0,0,.2)]">{initials}</span>
-          )}
         </>
       ) : initials ? (
         <span className="text-[0.95em] font-bold">{initials}</span>

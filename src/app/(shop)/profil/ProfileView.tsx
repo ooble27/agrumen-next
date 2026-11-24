@@ -23,14 +23,12 @@ const THEMES: { id: ThemePref; label: string; Icon: typeof Sun }[] = [
 
 function Row({
   icon,
-  color,
   label,
   value,
   onClick,
   href,
 }: {
   icon: React.ReactNode;
-  color: string;
   label: string;
   value?: string;
   onClick?: () => void;
@@ -38,7 +36,7 @@ function Row({
 }) {
   const inner = (
     <>
-      <span className="grid size-10 shrink-0 place-items-center rounded-[13px] text-white" style={{ background: color }}>
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-bg text-ink">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
@@ -90,7 +88,7 @@ export function ProfileView() {
       {/* Carte d'identité */}
       <section className="mt-5 overflow-hidden rounded-[28px] bg-[#151515] p-5 text-white dark:bg-surface">
         <div className="flex items-center gap-4">
-          <button type="button" onClick={() => setSheet("avatar")} aria-label="Changer ma photo" className="relative shrink-0 transition active:scale-95">
+          <button type="button" onClick={() => setSheet("avatar")} aria-label="Changer mon avatar" className="relative shrink-0 transition active:scale-95">
             <Avatar profile={profile} className="size-[68px] text-[22px] ring-[3px] ring-white/15" />
             <span className="absolute -bottom-0.5 -right-0.5 grid size-7 place-items-center rounded-full bg-white text-[#151515] ring-[3px] ring-[#151515] dark:ring-surface">
               <Camera className="size-3.5" strokeWidth={2.2} />
@@ -182,15 +180,15 @@ export function ProfileView() {
 
       <Group title="Compte">
         <Row
-          icon={<MapPin className="size-5" strokeWidth={2} />}
-          color="#FF7A1A"
+          icon={<MapPin className="size-5" strokeWidth={1.8} />}
+          
           label="Adresse de livraison"
           value={profile.address ? [profile.address, profile.address2].filter(Boolean).join(", ") : "À choisir sur la carte"}
           onClick={() => setSheet("address")}
         />
         <Row
-          icon={<User className="size-5" strokeWidth={2} />}
-          color="#4CC764"
+          icon={<User className="size-5" strokeWidth={1.8} />}
+          
           label="Mes infos"
           value={[profile.name, profile.phone].filter(Boolean).join(" · ") || "Nom et téléphone"}
           onClick={() => {
@@ -198,7 +196,7 @@ export function ProfileView() {
             setSheet("infos");
           }}
         />
-        <Row icon={<Heart className="size-5" strokeWidth={2} />} color="#FF4D6D" label="Mes favoris" value={`${favs.length} plat${favs.length > 1 ? "s" : ""}`} href="/favoris" />
+        <Row icon={<Heart className="size-5" strokeWidth={1.8} />} label="Mes favoris" value={`${favs.length} plat${favs.length > 1 ? "s" : ""}`} href="/favoris" />
       </Group>
 
       <Group title="Apparence">
@@ -223,16 +221,16 @@ export function ProfileView() {
       <Group title="Aide">
         {SITE.whatsapp && (
           <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-3.5 px-4 py-3.5">
-            <span className="grid size-10 place-items-center rounded-[13px] bg-[#25D366] text-white">
-              <MessageCircle className="size-5" strokeWidth={2} />
+            <span className="grid size-10 place-items-center rounded-full bg-bg text-ink">
+              <MessageCircle className="size-5" strokeWidth={1.8} />
             </span>
             <span className="flex-1 text-[16px] font-medium">Nous écrire</span>
             <ChevronRight className="size-5 text-faint" />
           </a>
         )}
         <Row
-          icon={<Sparkles className="size-5" strokeWidth={2} />}
-          color="#7C5CFF"
+          icon={<Sparkles className="size-5" strokeWidth={1.8} />}
+          
           label="Revoir la présentation"
           onClick={() => {
             try {
@@ -248,6 +246,16 @@ export function ProfileView() {
       <footer className="mt-10 flex flex-col items-center gap-2 text-center">
         <Logo className="h-6 opacity-60" />
         <p className="text-[12px] text-faint">Fait maison à {SITE.city.split(",")[0]}</p>
+        <p className="text-[11px] text-faint">
+          Avatars « Adventurer » par{" "}
+          <a href="https://www.instagram.com/lischi_art/" target="_blank" rel="noopener noreferrer" className="underline">
+            Lisa Wischofsky
+          </a>
+          ,{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
+            CC BY 4.0
+          </a>
+        </p>
       </footer>
 
       {/* Infos personnelles */}

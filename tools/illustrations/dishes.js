@@ -92,7 +92,7 @@ D["raviolis-grilles"] = () => {
   plate(a, 196, 266, 168, 62, "#2b2b2b");
   // assiette sombre : retouche
   a.body.pop(); a.body.pop(); a.body.pop();
-  a.add(`<ellipse cx="196" cy="273" rx="168" ry="62" fill="#1c1c1c"/><ellipse cx="196" cy="266" rx="168" ry="62" fill="${a.g(lin([[0, "#3a3a3a"], [1, "#242424"]]))}"/><ellipse cx="196" cy="270" rx="124" ry="43" fill="#2c2c2c"/>`);
+  a.add(`<ellipse cx="196" cy="266" rx="168" ry="62" fill="${a.g(lin([[0, "#3a3a3a"], [1, "#242424"]]))}"/><ellipse cx="196" cy="270" rx="124" ry="43" fill="#2c2c2c"/>`);
   dumpling(a, 130, 250, 0.9, -12, { fried: true });
   dumpling(a, 200, 262, 0.95, 0, { fried: true });
   dumpling(a, 268, 250, 0.9, 12, { fried: true });
