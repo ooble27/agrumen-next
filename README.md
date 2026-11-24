@@ -26,7 +26,11 @@ npm run dev
 - **Nom, ville, numéro WhatsApp, frais, taxes, horaires** : `src/lib/site.ts`
 - **Produits, prix, options, photos** : `src/lib/products.ts`. Les images sont des PNG/WebP détourés, sur fond transparent, dans `public/food`.
 - **Couleurs des deux thèmes** : `src/app/globals.css`
-- **Logo** : `src/components/Logo.tsx`
+- **Logo** : `public/logo.svg`. Les icônes de l'app installable sont dans `public/icons` et `src/app/apple-icon.png`.
+
+## App installable (PWA)
+
+Sur iPhone : Safari → Partager → « Sur l'écran d'accueil ». Sur Android : Chrome → « Installer l'application ». Le service worker (`public/sw.js`) garde le menu et les images en cache pour un chargement instantané. Le zoom est désactivé.
 
 Les commandes sont envoyées sur WhatsApp au numéro défini dans `SITE.whatsapp`.
 

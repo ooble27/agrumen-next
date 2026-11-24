@@ -120,7 +120,7 @@ export function ProductView({ product, related }: { product: Product; related: P
             rows={2}
             maxLength={140}
             placeholder="Allergies, sans oignon, bien croustillant…"
-            className="mt-3 w-full resize-none rounded-[22px] border border-line bg-surface px-5 py-4 text-[15px] outline-none placeholder:text-faint focus:border-brand"
+            className="mt-3 w-full resize-none rounded-[22px] border border-line bg-surface px-5 py-4 text-[16px] outline-none placeholder:text-faint focus:border-brand"
           />
         </label>
 

@@ -160,8 +160,18 @@ body {
   color: var(--text);
 }
 
+html {
+  /* bloque le zoom double-tap et le rebond horizontal */
+  touch-action: manipulation;
+  overscroll-behavior-x: none;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: var(--font-sans);
+  overscroll-behavior-y: none;
+  -webkit-user-select: none;
+  user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
@@ -179,6 +189,10 @@ button {
 input,
 textarea {
   font: inherit;
+  /* ≥ 16px : iOS ne zoome pas quand on touche un champ */
+  font-size: max(16px, 1em);
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Pas de barre de défilement visible, nulle part (comme une app native). */
