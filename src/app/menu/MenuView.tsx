@@ -6,7 +6,8 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { Bell, Check, MapPin, Search, SlidersHorizontal, X } from "lucide-react";
 import { CATEGORIES, PRODUCTS, type Category } from "@/lib/products";
 import { SITE } from "@/lib/site";
-import { price } from "@/lib/format";
+import { discount, price } from "@/lib/format";
+import { getProduct } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -18,10 +19,15 @@ const SORTS: { id: Sort; label: string }[] = [
   { id: "desc", label: "Prix décroissant" },
 ];
 
+function off(slug: string) {
+  const p = getProduct(slug);
+  return p?.oldPrice ? `-${discount(p.price, p.oldPrice)}%` : "Promo";
+}
+
 const PROMOS = [
   {
     title: "Nems au poulet",
-    big: "-20%",
+    big: off("nems-poulet"),
     href: "/produit/nems-poulet",
     image: "/img/nems-poulet.jpg",
     focus: "50% 60%",
@@ -29,7 +35,7 @@ const PROMOS = [
   },
   {
     title: "Livraison offerte",
-    big: "0 F",
+    big: "0 $",
     sub: `dès ${price(SITE.freeDeliveryFrom)}`,
     href: "#produits",
     image: "/img/poulet-croustillant.jpg",
@@ -37,7 +43,7 @@ const PROMOS = [
   },
   {
     title: "Samoussas bœuf",
-    big: "-25%",
+    big: off("samoussas-boeuf"),
     href: "/produit/samoussas-boeuf",
     image: "/img/samoussas-boeuf.jpg",
     bg: "var(--promo-1)",
@@ -105,7 +111,7 @@ export function MenuView() {
               <div className="mt-3 flex gap-3 rounded-2xl bg-surface p-3">
                 <span className="mt-1 size-2 shrink-0 rounded-full bg-brand" />
                 <p className="text-[13px] leading-snug text-ink/80">
-                  Livraison offerte dès {price(SITE.freeDeliveryFrom)} de commande, partout à Dakar.
+                  Livraison offerte dès {price(SITE.freeDeliveryFrom)} de commande.
                 </p>
               </div>
             </div>
@@ -222,7 +228,7 @@ export function MenuView() {
         {items.length === 0 ? (
           <div className="rounded-[24px] bg-surface px-6 py-14 text-center">
             <p className="text-lg font-medium">Aucun résultat</p>
-            <p className="mt-1 text-muted">Essayez “nems”, “poulet” ou “bissap”.</p>
+            <p className="mt-1 text-muted">Essayez “nems”, “poulet” ou “limonade”.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5">

@@ -50,8 +50,8 @@ export function ProfileView() {
           [
             ["name", "Nom complet", "name"],
             ["phone", "Téléphone", "tel"],
-            ["area", "Quartier", "address-level2"],
-            ["address", "Adresse / repère", "street-address"],
+            ["address", "Adresse", "street-address"],
+            ["area", "Code postal", "postal-code"],
           ] as const
         ).map(([k, label, ac]) => (
           <label key={k} className="block">

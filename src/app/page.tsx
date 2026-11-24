@@ -37,7 +37,7 @@ export default function Welcome() {
           </h1>
 
           <p className="rise mt-5 max-w-sm text-[16px] leading-relaxed text-ink/65 [animation-delay:120ms]">
-            {SITE.tagline} Commandez en deux minutes, payez avec Wave, Orange Money ou à la livraison.
+            {SITE.tagline} Commandez en deux minutes, payez par Interac, par carte ou comptant à la livraison.
           </p>
 
           <Link

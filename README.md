@@ -1,6 +1,6 @@
 # Nemsy
 
-Application web de commande de nems et snacks à Dakar. Mobile-first, avec un mode clair et un mode sombre.
+Application web de commande de nems et snacks, livrés au Canada. Prix en dollars canadiens, taxes TPS + TVQ incluses au paiement. Mobile-first, avec un mode clair et un mode sombre.
 
 ## Démarrer
 
@@ -17,13 +17,13 @@ npm run dev
 | `/menu` | Catalogue : recherche, tri, promos, catégories |
 | `/produit/[slug]` | Fiche produit |
 | `/panier` | Panier |
-| `/paiement` | Paiement (Wave, Orange Money, espèces) et adresse |
+| `/paiement` | Paiement (virement Interac, carte ou comptant à la livraison) et adresse |
 | `/confirmation` | Commande confirmée |
 | `/favoris`, `/profil` | Favoris, coordonnées et thème |
 
 ## Personnaliser
 
-- **Nom, ville, numéro WhatsApp, frais de livraison** : `src/lib/site.ts`
+- **Nom, ville, numéro WhatsApp, frais de livraison, taxes** : `src/lib/site.ts`
 - **Produits, prix, photos** : `src/lib/products.ts` (photos dans `public/img`)
 - **Couleurs des deux thèmes** : `src/app/globals.css`
 

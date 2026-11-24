@@ -17,12 +17,12 @@ export function MapCard() {
         <path d="M180 -10c-6 40 20 80 10 160" />
       </g>
       <g fill="var(--map-text)" fontSize="8" fontFamily="inherit">
-        <text x="34" y="30">Plateau</text>
-        <text x="108" y="20">Médina</text>
-        <text x="266" y="30">Fann</text>
-        <text x="292" y="98">Mermoz</text>
-        <text x="34" y="114">Gorée</text>
-        <text x="206" y="112">Point E</text>
+        <text x="34" y="30">Centre-ville</text>
+        <text x="108" y="20">Marché</text>
+        <text x="266" y="30">Gare</text>
+        <text x="288" y="98">Université</text>
+        <text x="34" y="114">Vieux-Port</text>
+        <text x="204" y="112">Rue Principale</text>
         <text x="120" y="78">Parc</text>
       </g>
       <g transform="translate(176 52)">

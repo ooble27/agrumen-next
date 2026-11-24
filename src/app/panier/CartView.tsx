@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 
 export function CartView() {
-  const { lines, subtotal, delivery, total } = useCart();
+  const { lines, subtotal, delivery, taxes, total } = useCart();
   const missing = SITE.freeDeliveryFrom - subtotal;
 
   return (
@@ -89,6 +89,10 @@ export function CartView() {
             <div className="flex justify-between text-muted">
               <dt>Livraison</dt>
               <dd className={delivery === 0 ? "text-brand" : "text-ink"}>{delivery === 0 ? "Offerte" : price(delivery)}</dd>
+            </div>
+            <div className="flex justify-between text-muted">
+              <dt>{SITE.taxLabel}</dt>
+              <dd className="text-ink">{price(taxes)}</dd>
             </div>
             <div className="flex justify-between border-t border-line pt-3 text-[18px]">
               <dt>Total</dt>

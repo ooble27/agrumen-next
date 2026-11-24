@@ -66,7 +66,9 @@ export function useCart() {
   const count = lines.reduce((s, l) => s + l.qty, 0);
   const subtotal = lines.reduce((s, l) => s + l.qty * l.product.price, 0);
   const delivery = subtotal === 0 || subtotal >= SITE.freeDeliveryFrom ? 0 : SITE.deliveryFee;
-  return { cart, lines, count, subtotal, delivery, total: subtotal + delivery };
+  const taxes = Math.round((subtotal + delivery) * SITE.taxRate * 100) / 100;
+  const total = Math.round((subtotal + delivery + taxes) * 100) / 100;
+  return { cart, lines, count, subtotal, delivery, taxes, total };
 }
 
 export const cartActions = {
@@ -100,6 +102,7 @@ export function toggleFavorite(slug: string) {
 
 /* ------------------------------------------------------------- profile */
 
+/** area = code postal */
 export type Profile = { name: string; phone: string; area: string; address: string };
 const profileStore = persisted<Profile>("nemsy-profile", { name: "", phone: "", area: "", address: "" });
 
@@ -116,6 +119,7 @@ export type Order = {
   lines: { slug: string; name: string; qty: number; price: number }[];
   subtotal: number;
   delivery: number;
+  taxes: number;
   total: number;
   payment: string;
   profile: Profile;

@@ -11,12 +11,16 @@ import { PageHeader } from "@/components/Header";
 import { MapCard } from "@/components/MapCard";
 
 const METHODS = [
-  { id: "wave", label: "Payer avec" },
-  { id: "om", label: "Orange Money" },
-  { id: "cash", label: "Espèces à la livraison" },
+  { id: "interac", label: "Virement" },
+  { id: "card", label: "Carte à la livraison" },
+  { id: "cash", label: "Comptant à la livraison" },
 ] as const;
 type Method = (typeof METHODS)[number]["id"];
-const METHOD_NAME: Record<Method, string> = { wave: "Wave", om: "Orange Money", cash: "Espèces à la livraison" };
+const METHOD_NAME: Record<Method, string> = {
+  interac: "Virement Interac",
+  card: "Carte à la livraison",
+  cash: "Comptant à la livraison",
+};
 
 function Radio({ checked }: { checked: boolean }) {
   return (
@@ -30,19 +34,34 @@ function Radio({ checked }: { checked: boolean }) {
   );
 }
 
-function WaveMark() {
+function InteracMark() {
   return (
-    <span className="inline-flex h-7 items-center rounded-md bg-[#1dc4ff] px-2.5 text-[16px] font-bold italic tracking-tight text-[#0b2f6b]">
-      wave
+    <span className="inline-flex h-7 items-center rounded-md bg-[#fdb913] px-2.5 text-[15px] font-bold tracking-tight text-[#151515]">
+      Interac
     </span>
   );
 }
 
+function CardMarks() {
+  return (
+    <span className="ml-auto flex gap-1.5">
+      <span className="inline-flex h-7 items-center rounded-md bg-[#1a1f71] px-2 text-[12px] font-extrabold italic tracking-wide text-white">VISA</span>
+      <span className="relative inline-flex h-7 w-11 items-center justify-center rounded-md bg-[#151515] ring-1 ring-line">
+        <span className="size-3.5 rounded-full bg-[#eb001b]" />
+        <span className="-ml-1.5 size-3.5 rounded-full bg-[#f79e1b] mix-blend-screen" />
+      </span>
+      <span className="inline-flex h-7 items-center rounded-md bg-[#2e77bc] px-2 text-[11px] font-bold text-white">AMEX</span>
+    </span>
+  );
+}
+
+const POSTAL = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+
 export function PaymentView() {
   const router = useRouter();
-  const { lines, subtotal, delivery, total } = useCart();
+  const { lines, subtotal, delivery, taxes, total } = useCart();
   const saved = useProfile();
-  const [method, setMethod] = useState<Method>("wave");
+  const [method, setMethod] = useState<Method>("interac");
   const [form, setForm] = useState<typeof saved | null>(null);
   const [terms, setTerms] = useState(false);
   const [details, setDetails] = useState(false);
@@ -52,8 +71,10 @@ export function PaymentView() {
   const f = form ?? saved;
   const update = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...f, [k]: e.target.value });
 
-  const phoneOk = f.phone.replace(/\D/g, "").length >= 9;
-  const valid = f.name.trim().length > 1 && phoneOk && f.area.trim().length > 1 && terms && lines.length > 0;
+  const phoneOk = f.phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "").length === 10;
+  const postalOk = POSTAL.test(f.area.trim());
+  const addressOk = f.address.trim().length > 4;
+  const valid = f.name.trim().length > 1 && phoneOk && postalOk && addressOk && terms && lines.length > 0;
 
   const submit = () => {
     setTried(true);
@@ -65,6 +86,7 @@ export function PaymentView() {
       lines: lines.map((l) => ({ slug: l.product.slug, name: l.product.name, qty: l.qty, price: l.product.price })),
       subtotal,
       delivery,
+      taxes,
       total,
       payment: METHOD_NAME[method],
       profile: f,
@@ -78,13 +100,14 @@ export function PaymentView() {
         "",
         `Sous-total : ${price(subtotal)}`,
         `Livraison : ${delivery === 0 ? "offerte" : price(delivery)}`,
+        `${SITE.taxLabel} : ${price(taxes)}`,
         `Total : ${price(total)}`,
         `Paiement : ${order.payment}`,
         "",
         `Nom : ${f.name}`,
         `Téléphone : ${f.phone}`,
-        `Quartier : ${f.area}`,
-        f.address ? `Adresse : ${f.address}` : "",
+        `Code postal : ${f.area.toUpperCase()}`,
+        `Adresse : ${f.address}`,
       ]
         .filter((l, i, a) => l !== "" || a[i - 1] !== "")
         .join("\n");
@@ -125,17 +148,8 @@ export function PaymentView() {
             <input type="radio" name="method" className="sr-only" checked={method === m.id} onChange={() => setMethod(m.id)} />
             <Radio checked={method === m.id} />
             <span className={method === m.id ? "text-ink" : "text-ink/70"}>{m.label}</span>
-            {m.id === "wave" && <WaveMark />}
-            {m.id === "om" && (
-              <span className="ml-auto flex gap-1.5">
-                <span className="inline-flex h-7 items-center rounded-md bg-[#ff7900] px-2 text-[11px] font-bold uppercase tracking-wide text-black">
-                  orange
-                </span>
-                <span className="inline-flex h-7 items-center rounded-md bg-[#151515] px-2 text-[11px] font-semibold text-[#ff7900] ring-1 ring-line">
-                  Money
-                </span>
-              </span>
-            )}
+            {m.id === "interac" && <InteracMark />}
+            {m.id === "card" && <CardMarks />}
             {m.id === "cash" && <Banknote className="ml-auto size-7 text-brand" strokeWidth={1.5} />}
           </label>
         ))}
@@ -156,12 +170,19 @@ export function PaymentView() {
               onChange={update("phone")}
               inputMode="tel"
               autoComplete="tel"
-              placeholder="77 000 00 00"
+              placeholder="514 555-0123"
             />
           </label>
           <label className="block">
-            <span className="text-[15px] text-muted">Quartier</span>
-            <input className={`field mt-2 ${err(f.area.trim().length < 2)}`} value={f.area} onChange={update("area")} placeholder="Mermoz" />
+            <span className="text-[15px] text-muted">Code postal</span>
+            <input
+              className={`field mt-2 uppercase ${err(!postalOk)}`}
+              value={f.area}
+              onChange={update("area")}
+              placeholder="H2X 1Y4"
+              autoComplete="postal-code"
+              maxLength={7}
+            />
           </label>
         </div>
       </div>
@@ -188,10 +209,10 @@ export function PaymentView() {
           <MapCard />
         </div>
         <input
-          className="field mt-3 !bg-bg"
+          className={`field mt-3 !bg-bg ${err(!addressOk)}`}
           value={f.address}
           onChange={update("address")}
-          placeholder="Rue, repère, étage… (facultatif)"
+          placeholder="Adresse complète (rue, app.)"
           autoComplete="street-address"
         />
       </section>
@@ -222,6 +243,10 @@ export function PaymentView() {
             <div className="flex justify-between">
               <dt>Livraison</dt>
               <dd className={delivery === 0 ? "text-brand" : "text-ink"}>{delivery === 0 ? "Offerte" : price(delivery)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt>{SITE.taxLabel}</dt>
+              <dd className="text-ink">{price(taxes)}</dd>
             </div>
           </dl>
         )}
