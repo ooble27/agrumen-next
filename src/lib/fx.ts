@@ -81,31 +81,3 @@ export function useCartBump() {
     () => 0,
   );
 }
-
-/* --------------------------------------------------------------- toasts */
-
-export type Toast = { id: number; title: string; image?: string; action?: { label: string; run: () => void } };
-let toasts: Toast[] = [];
-const toastListeners = new Set<() => void>();
-const emit = () => toastListeners.forEach((l) => l());
-
-export function toast(t: Omit<Toast, "id">) {
-  const id = Date.now() + Math.random();
-  toasts = [{ ...t, id }];
-  emit();
-  window.setTimeout(() => dismissToast(id), 3200);
-}
-export function dismissToast(id: number) {
-  toasts = toasts.filter((t) => t.id !== id);
-  emit();
-}
-export function useToasts() {
-  return useSyncExternalStore(
-    (l) => {
-      toastListeners.add(l);
-      return () => toastListeners.delete(l);
-    },
-    () => toasts,
-    () => toasts,
-  );
-}

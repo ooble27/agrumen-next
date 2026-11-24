@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Bell, Bike, Check, ChevronDown, Clock, Flame, Search, SlidersHorizontal, Star, X } from "lucide-react";
 import { PRODUCTS, getProduct, type Category, type Product } from "@/lib/products";
 import { ETA, SITE } from "@/lib/site";
@@ -23,11 +23,11 @@ const SORTS: { id: Sort; label: string }[] = [
 type Tab = { id: "popular" | Category; label: string; icon?: string };
 const TABS: Tab[] = [
   { id: "popular", label: "Populaires" },
-  { id: "nems", label: "Nems", icon: "/food/nems-poulet.webp" },
-  { id: "samoussas", label: "Samoussas", icon: "/food/samoussas.webp" },
-  { id: "raviolis", label: "Raviolis", icon: "/food/raviolis-vapeur.webp" },
-  { id: "plats", label: "Plats", icon: "/food/riz-cantonais.webp" },
-  { id: "boissons", label: "Boissons", icon: "/food/limonade-fraise.webp" },
+  { id: "nems", label: "Nems", icon: "/food/nems-poulet.svg" },
+  { id: "samoussas", label: "Samoussas", icon: "/food/samoussas.svg" },
+  { id: "raviolis", label: "Raviolis", icon: "/food/raviolis-vapeur.svg" },
+  { id: "plats", label: "Plats", icon: "/food/riz-cantonais.svg" },
+  { id: "boissons", label: "Boissons", icon: "/food/limonade-fraise.svg" },
 ];
 
 function off(slug: string) {
@@ -36,9 +36,9 @@ function off(slug: string) {
 }
 
 const PROMOS = [
-  { title: "Nems au poulet", big: off("nems-poulet"), href: "/produit/nems-poulet", image: "/food/nems-poulet.webp", bg: "var(--promo-1)" },
-  { title: "Livraison offerte", big: "0 $", cta: `Dès ${price(SITE.freeDeliveryFrom)}`, href: "/panier", image: "/food/poulet-croustillant.webp", bg: "var(--promo-2)" },
-  { title: "Samoussas maison", big: off("samoussas"), href: "/produit/samoussas", image: "/food/samoussas.webp", bg: "var(--promo-1)" },
+  { title: "Nems au poulet", big: off("nems-poulet"), href: "/produit/nems-poulet", image: "/food/nems-poulet.svg", bg: "var(--promo-1)" },
+  { title: "Livraison offerte", big: "0 $", cta: `Dès ${price(SITE.freeDeliveryFrom)}`, href: "/panier", image: "/food/poulet-croustillant.svg", bg: "var(--promo-2)" },
+  { title: "Samoussas maison", big: off("samoussas"), href: "/produit/samoussas", image: "/food/samoussas.svg", bg: "var(--promo-1)" },
 ];
 
 const norm = (s: string) =>
@@ -64,7 +64,6 @@ export function MenuView() {
   const promoRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLDivElement>(null);
   const chipRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
   const touching = useRef(false);
   const jumping = useRef(false);
 
@@ -80,19 +79,15 @@ export function MenuView() {
     items: sortList(t.id === "popular" ? PRODUCTS.filter((p) => p.popular) : PRODUCTS.filter((p) => p.category === t.id && !p.popular)),
   })).filter((s) => s.items.length);
 
-  /* Pastille animée sous la catégorie active */
-  const placeIndicator = useCallback(() => {
+  /* Garde la catégorie active visible dans la rangée */
+  useEffect(() => {
     const el = chipRefs.current[active];
     const box = chipsRef.current;
     if (!el || !box) return;
-    setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
-    box.scrollTo({ left: el.offsetLeft - box.clientWidth / 2 + el.offsetWidth / 2, behavior: "smooth" });
+    const left = el.offsetLeft - 20;
+    const right = el.offsetLeft + el.offsetWidth + 20;
+    if (left < box.scrollLeft || right > box.scrollLeft + box.clientWidth) box.scrollTo({ left: Math.max(0, left), behavior: "auto" });
   }, [active]);
-  useEffect(() => {
-    placeIndicator();
-    window.addEventListener("resize", placeIndicator);
-    return () => window.removeEventListener("resize", placeIndicator);
-  }, [placeIndicator]);
 
   /* Catégorie active selon le défilement */
   useEffect(() => {
@@ -229,14 +224,11 @@ export function MenuView() {
                 <Link
                   key={p.title}
                   href={p.href}
-                  transitionTypes={["nav-forward"]}
                   className="press relative h-[160px] w-[86%] max-w-[440px] shrink-0 snap-start overflow-hidden rounded-[26px] sm:w-[420px]"
                   style={{ background: p.bg }}
                 >
                   <span className="absolute -right-3 top-1/2 h-[130%] w-[56%] -translate-y-1/2">
-                    <span className="drift block size-full" style={{ animationDelay: `${-i * 2}s` }}>
-                      <Food src={p.image} alt="" priority={i === 0} sizes="240px" className="size-full" />
-                    </span>
+                    <Food src={p.image} alt="" priority={i === 0} sizes="240px" className="size-full" />
                   </span>
                   <div className="relative flex h-full w-[62%] flex-col justify-between p-5">
                     <div>
@@ -267,13 +259,6 @@ export function MenuView() {
           {/* Catégories collantes, avec pastille animée */}
           <nav aria-label="Catégories" className="sticky top-0 z-20 -mx-5 mt-4 bg-bg/90 py-3 backdrop-blur-xl sm:-mx-8 lg:top-[76px]">
             <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
-              {indicator && (
-                <span
-                  aria-hidden
-                  className="absolute top-0 h-11 rounded-full bg-[#151515] transition-all duration-500 [transition-timing-function:var(--ease-out)] dark:bg-white"
-                  style={{ left: indicator.left, width: indicator.width }}
-                />
-              )}
               {TABS.map((t) => {
                 const on = active === t.id;
                 return (
@@ -286,7 +271,7 @@ export function MenuView() {
                     onClick={() => jump(t.id)}
                     aria-current={on}
                     className={`relative z-10 flex h-11 shrink-0 items-center gap-2 rounded-full border pl-1.5 pr-4 text-[15px] transition-colors duration-300 ${
-                      on ? "border-transparent text-white dark:text-[#151515]" : "border-line text-ink/70"
+                      on ? "border-transparent bg-[#151515] text-white dark:bg-white dark:text-[#151515]" : "border-line text-ink/70"
                     }`}
                   >
                     <span className={`grid size-8 place-items-center rounded-full ${on ? "bg-white/15 dark:bg-black/5" : "bg-surface"}`}>
@@ -344,7 +329,7 @@ export function MenuView() {
 
       <Sheet open={sheet === "notif"} onClose={() => setSheet(null)} title="Notifications">
         <div className="flex items-center gap-4 rounded-[22px] bg-surface p-4">
-          <Food src="/food/poulet-croustillant.webp" alt="" sizes="56px" className="size-14 shrink-0" />
+          <Food src="/food/poulet-croustillant.svg" alt="" sizes="56px" className="size-14 shrink-0" />
           <div>
             <p className="font-medium">Livraison offerte</p>
             <p className="mt-0.5 text-[14px] leading-snug text-muted">Dès {price(SITE.freeDeliveryFrom)} d’achat, partout dans la zone de livraison.</p>

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Check, ChevronRight, MessageCircle, Monitor, Moon, RotateCcw, Sun, User } from "lucide-react";
 import { SITE } from "@/lib/site";
@@ -150,9 +149,20 @@ export function ProfileView() {
           <ChevronRight className="size-5 text-muted" />
         </a>
       )}
-      <Link href="/" className="mt-4 block text-center text-[14px] text-muted">
-        À propos de {SITE.name}
-      </Link>
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            localStorage.removeItem("nemsy-onboarded");
+          } catch {
+            /* ignore */
+          }
+          window.location.href = "/";
+        }}
+        className="mt-4 block w-full text-center text-[14px] text-muted"
+      >
+        Revoir la présentation
+      </button>
     </main>
   );
 }

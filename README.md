@@ -13,7 +13,7 @@ npm run dev
 
 | Route | Écran |
 | --- | --- |
-| `/` | Accueil « Nems livrés tout chauds » |
+| `/` | Présentation en 3 écrans (au premier lancement) |
 | `/menu` | Recherche, tri, promos, catégories, sections du menu |
 | `/produit/[slug]` | Fiche produit : options, suppléments, instructions |
 | `/panier` | Panier et suggestions |
@@ -24,7 +24,8 @@ npm run dev
 ## Personnaliser
 
 - **Nom, ville, numéro WhatsApp, frais, taxes, horaires** : `src/lib/site.ts`
-- **Produits, prix, options, photos** : `src/lib/products.ts`. Les images sont des PNG/WebP détourés, sur fond transparent, dans `public/food`.
+- **Produits, prix, options** : `src/lib/products.ts`
+- **Illustrations des plats** : `public/food/*.svg`, générées par `tools/illustrations` (voir son README)
 - **Couleurs des deux thèmes** : `src/app/globals.css`
 - **Logo** : `public/logo.svg`. Les icônes de l'app installable sont dans `public/icons` et `src/app/apple-icon.png`.
 
@@ -34,4 +35,3 @@ Sur iPhone : Safari → Partager → « Sur l'écran d'accueil ». Sur Android :
 
 Les commandes sont envoyées sur WhatsApp au numéro défini dans `SITE.whatsapp`.
 
-Photos d'origine : [Unsplash](https://unsplash.com/license). Elles ont été détourées.

@@ -327,17 +327,6 @@ body,
   transform: scale(0.97);
 }
 
-/* Image qui apparaît en douceur une fois chargée */
-.fade-img {
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
-}
-.fade-img[data-loaded="true"] {
-  opacity: 1;
-  transform: none;
-}
-
 /* Rebond du compteur du panier */
 @keyframes bump {
   0% { transform: scale(1); }
@@ -347,22 +336,6 @@ body,
 }
 .bump {
   animation: bump 0.5s var(--ease-out);
-}
-
-/* Le nem de l'accueil flotte */
-@keyframes float {
-  0%, 100% { translate: 0 0; rotate: -6deg; }
-  50% { translate: 0 -12px; rotate: -3deg; }
-}
-.float {
-  animation: float 5.5s ease-in-out infinite;
-}
-@keyframes drift {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 6px -10px; }
-}
-.drift {
-  animation: drift 7s ease-in-out infinite;
 }
 
 @keyframes sheet-in {
@@ -388,70 +361,12 @@ body,
   animation: slide-up 0.5s var(--ease-out) both;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Transitions entre pages                                            */
-/* ------------------------------------------------------------------ */
-@keyframes vt-fade { from { opacity: 0; } }
-@keyframes vt-slide { from { translate: var(--vt-offset) 0; } }
-
-::view-transition-old(.nav-forward) {
-  --vt-offset: -60px;
-  animation: 160ms ease-in both reverse vt-fade, 420ms var(--ease-out) both reverse vt-slide;
-}
-::view-transition-new(.nav-forward) {
-  --vt-offset: 60px;
-  animation: 240ms ease-out 120ms both vt-fade, 420ms var(--ease-out) both vt-slide;
-}
-::view-transition-old(.nav-back) {
-  --vt-offset: 60px;
-  animation: 160ms ease-in both reverse vt-fade, 420ms var(--ease-out) both reverse vt-slide;
-}
-::view-transition-new(.nav-back) {
-  --vt-offset: -60px;
-  animation: 240ms ease-out 120ms both vt-fade, 420ms var(--ease-out) both vt-slide;
-}
-::view-transition-old(.page-fade) {
-  animation: 140ms ease-in both reverse vt-fade;
-}
-::view-transition-new(.page-fade) {
-  animation: 220ms ease-out 60ms both vt-fade;
-}
-
-/* Le plat "vole" de la carte à la fiche produit */
-::view-transition-group(.morph) {
-  animation-duration: 520ms;
-  animation-timing-function: var(--ease-out);
-}
-
-/* Les barres de navigation ne bougent pas pendant les transitions */
-::view-transition-group(top-nav),
-::view-transition-group(bottom-nav) {
-  animation: none;
-  z-index: 100;
-}
-::view-transition-old(top-nav),
-::view-transition-old(bottom-nav) {
-  display: none;
-}
-::view-transition-new(top-nav),
-::view-transition-new(bottom-nav) {
-  animation: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*),
-  ::view-transition-new(*),
-  ::view-transition-group(*) {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-  }
-  .float,
-  .drift {
+  .sheet,
+  .slide-up,
+  .bump,
+  .rise,
+  .pop {
     animation: none;
   }
-}
-
-@keyframes toast-in {
-  from { opacity: 0; transform: translateY(-24px) scale(0.96); }
-  to { opacity: 1; transform: none; }
 }

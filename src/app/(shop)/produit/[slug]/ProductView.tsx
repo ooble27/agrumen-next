@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, ViewTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, ChevronLeft, Clock, Heart, Minus, Plus, ShoppingBag, Star } from "lucide-react";
 import { defaultOptions, unitPrice, type Product } from "@/lib/products";
 import { ETA } from "@/lib/site";
 import { pad, price } from "@/lib/format";
 import { cartActions, toggleFavorite, useCart, useFavorites } from "@/lib/store";
-import { flyToCart, haptic, toast, useCartBump } from "@/lib/fx";
+import { flyToCart, haptic, useCartBump } from "@/lib/fx";
 import { PageHeader } from "@/components/Header";
 import { Food } from "@/components/Food";
 import { Checkbox, Radio } from "@/components/Option";
@@ -24,14 +24,14 @@ export function ProductView({ product, related }: { product: Product; related: P
   const { count } = useCart();
   const bump = useCartBump();
   const foodRef = useRef<HTMLSpanElement>(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [compact, setCompact] = useState(false);
 
+  // Barre compacte : on ne met à jour l'état qu'au passage du seuil (pas à chaque pixel).
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
+    const onScroll = () => setCompact(window.scrollY > 300);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  const compact = scrollY > 300;
   const back = () => (window.history.length > 1 ? router.back() : router.push("/menu"));
 
   const pick = (groupId: string, choiceId: string, single: boolean) => {
@@ -46,18 +46,12 @@ export function ProductView({ product, related }: { product: Product; related: P
     flyToCart(foodRef.current);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);
-    toast({
-      title: `${qty} × ${product.name} ajouté${qty > 1 ? "s" : ""}`,
-      image: product.image,
-      action: { label: "Voir le panier", run: () => router.push("/panier", { transitionTypes: ["nav-forward"] } as never) },
-    });
     setQty(1);
   };
 
   const cartButton = (
     <Link
       href="/panier"
-      transitionTypes={["nav-forward"]}
       data-cart-target=""
       aria-label={`Panier, ${count} article${count > 1 ? "s" : ""}`}
       className="relative grid size-12 place-items-center rounded-full bg-surface text-ink transition active:scale-90"
@@ -79,14 +73,8 @@ export function ProductView({ product, related }: { product: Product; related: P
           <PageHeader title={product.name} />
           <div className="absolute right-0 top-1">{cartButton}</div>
         </div>
-        <span
-          ref={foodRef}
-          className="block will-change-transform"
-          style={{ transform: `translateY(${Math.min(scrollY, 400) * 0.28}px)`, opacity: 1 - Math.min(scrollY, 400) / 520 }}
-        >
-          <ViewTransition name={`food-${product.slug}`} share="morph">
-            <Food src={product.image} alt={product.name} priority sizes="(min-width: 1024px) 520px, 90vw" className="mx-auto mt-6 aspect-[1/0.78] w-[74%] max-w-[440px]" />
-          </ViewTransition>
+        <span ref={foodRef} className="block">
+          <Food src={product.image} alt={product.name} priority sizes="(min-width: 1024px) 520px, 90vw" className="mx-auto mt-2 aspect-square w-[82%] max-w-[440px]" />
         </span>
         <button
           type="button"

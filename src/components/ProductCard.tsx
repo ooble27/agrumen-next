@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, ViewTransition } from "react";
+import { useRef, useState } from "react";
 import { Check, Heart, Plus } from "lucide-react";
 import { defaultOptions, type Product } from "@/lib/products";
 import { price } from "@/lib/format";
 import { cartActions, toggleFavorite, useFavorites } from "@/lib/store";
-import { flyToCart, haptic, toast } from "@/lib/fx";
+import { flyToCart, haptic } from "@/lib/fx";
 import { Food } from "./Food";
 
 export function ProductCard({ product, priority }: { product: Product; priority?: boolean }) {
@@ -21,22 +21,12 @@ export function ProductCard({ product, priority }: { product: Product; priority?
     flyToCart(imgRef.current);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1100);
-    toast({
-      title: `${product.name} ajouté`,
-      image: product.image,
-      action: {
-        label: "Annuler",
-        run: () => cartActions.add(product.slug, -1, opts),
-      },
-    });
   };
 
   return (
     <article className={`tint-${product.tint} press relative flex flex-col overflow-hidden rounded-[24px]`}>
-      <Link ref={imgRef} href={href} transitionTypes={["nav-forward"]} className="block px-3 pt-4" aria-label={product.name}>
-        <ViewTransition name={`food-${product.slug}`} share="morph">
-          <Food src={product.image} alt={product.name} priority={priority} sizes="(min-width: 1024px) 240px, 45vw" className="mx-auto aspect-[1/0.78] w-[92%]" />
-        </ViewTransition>
+      <Link ref={imgRef} href={href} className="block px-3 pt-4" aria-label={product.name}>
+        <Food src={product.image} alt={product.name} priority={priority} sizes="(min-width: 1024px) 240px, 45vw" className="mx-auto aspect-[1/0.8] w-full" />
       </Link>
 
       <button
@@ -53,7 +43,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
       </button>
 
       <div className="px-3.5 pb-3.5 pt-3">
-        <Link href={href} transitionTypes={["nav-forward"]} className="line-clamp-1 text-[15px] leading-tight text-ink">
+        <Link href={href} className="line-clamp-1 text-[15px] leading-tight text-ink">
           {product.name}
         </Link>
         <p className="mt-2.5 text-[9.5px] leading-none text-ink/60">À partir de</p>

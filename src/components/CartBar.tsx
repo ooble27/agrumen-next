@@ -18,7 +18,6 @@ export function CartBar() {
     <div className="fixed inset-x-0 bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)] z-40 flex justify-center px-4 lg:hidden">
       <Link
         href="/panier"
-        transitionTypes={["nav-forward"]}
         className="slide-up press flex h-14 w-full max-w-[400px] items-center gap-3 rounded-full bg-brand pl-2 pr-5 text-white shadow-[0_18px_40px_-14px_rgba(47,158,75,.75)]"
       >
         <span key={bump} className="bump grid size-10 place-items-center rounded-full bg-white/20 text-[15px] font-semibold">

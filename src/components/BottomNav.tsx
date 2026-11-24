@@ -25,7 +25,6 @@ export function BottomNav() {
     <nav
       aria-label="Navigation principale"
       className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden"
-      style={{ viewTransitionName: "bottom-nav" }}
     >
       <div
         className="flex w-full max-w-[400px] items-center justify-between rounded-full p-2 backdrop-blur-xl"
@@ -37,7 +36,6 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              transitionTypes={href === "/panier" ? ["nav-forward"] : undefined}
               data-cart-target={href === "/panier" ? "" : undefined}
               aria-current={active ? "page" : undefined}
               className={

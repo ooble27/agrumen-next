@@ -23,7 +23,7 @@ export function TopNav() {
   const bump = useCartBump();
 
   return (
-    <header className="sticky top-0 z-40 hidden border-b border-line bg-bg/85 backdrop-blur-xl lg:block" style={{ viewTransitionName: "top-nav" }}>
+    <header className="sticky top-0 z-40 hidden border-b border-line bg-bg/85 backdrop-blur-xl lg:block">
       <div className="mx-auto flex h-[76px] max-w-6xl items-center gap-6 px-8">
         <Link href="/menu" aria-label="Accueil">
           <Logo />
@@ -53,7 +53,6 @@ export function TopNav() {
           <Link
             href="/panier"
             data-cart-target=""
-            transitionTypes={["nav-forward"]}
             className="press flex h-12 items-center gap-3 rounded-full bg-[#151515] pl-5 pr-2 text-[15px] font-medium text-white dark:bg-white dark:text-[#151515]"
           >
             <ShoppingBag className="size-5" strokeWidth={1.7} />

@@ -40,7 +40,7 @@ export function CartView() {
               <li key={l.key}>
                 <SwipeRow onDelete={() => cartActions.setQty(l.key, 0)}>
                 <div className="flex items-center gap-4">
-                <Link href={`/produit/${l.slug}`} transitionTypes={["nav-forward"]} className={`tint-${l.product.tint} grid size-[104px] shrink-0 place-items-center rounded-[22px] p-2`}>
+                <Link href={`/produit/${l.slug}`} className={`tint-${l.product.tint} grid size-[104px] shrink-0 place-items-center rounded-[22px] p-2`}>
                   <Food src={l.product.image} alt={l.product.name} sizes="104px" className="size-full" />
                 </Link>
                 <div className="min-w-0 flex-1">
