@@ -76,7 +76,7 @@ export function MenuView() {
   const results = q ? sortList(PRODUCTS.filter((p) => norm(`${p.name} ${p.short} ${p.description}`).includes(q))) : [];
   const sections = TABS.map((t) => ({
     ...t,
-    items: sortList(t.id === "popular" ? PRODUCTS.filter((p) => p.popular) : PRODUCTS.filter((p) => p.category === t.id && !p.popular)),
+    items: sortList(t.id === "popular" ? PRODUCTS.filter((p) => p.popular) : PRODUCTS.filter((p) => p.category === t.id)),
   })).filter((s) => s.items.length);
 
   /* Garde la catégorie active visible dans la rangée */
@@ -89,21 +89,24 @@ export function MenuView() {
     if (left < box.scrollLeft || right > box.scrollLeft + box.clientWidth) box.scrollTo({ left: Math.max(0, left), behavior: "auto" });
   }, [active]);
 
-  /* Catégorie active selon le défilement */
+  /* Catégorie active selon le défilement (IntersectionObserver : aucun calcul à chaque pixel) */
   useEffect(() => {
     if (q) return;
-    const onScroll = () => {
-      if (jumping.current) return;
-      const offset = (window.innerWidth >= 1024 ? 76 : 0) + 90;
-      let current: Tab["id"] = "popular";
-      for (const t of TABS) {
-        const el = document.getElementById(`sec-${t.id}`);
-        if (el && el.getBoundingClientRect().top <= offset) current = t.id;
-      }
-      setActive(current);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const visible = new Map<string, boolean>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (jumping.current) return;
+        for (const e of entries) visible.set(e.target.id.replace("sec-", ""), e.isIntersecting);
+        const first = TABS.find((t) => visible.get(t.id));
+        if (first) setActive(first.id);
+      },
+      { rootMargin: "-140px 0px -55% 0px" },
+    );
+    for (const t of TABS) {
+      const el = document.getElementById(`sec-${t.id}`);
+      if (el) io.observe(el);
+    }
+    return () => io.disconnect();
   }, [q]);
 
   const jump = (id: Tab["id"]) => {
@@ -216,7 +219,8 @@ export function MenuView() {
               onScroll={(e) => {
                 const el = e.currentTarget;
                 const w = ((el.firstElementChild as HTMLElement | null)?.offsetWidth ?? el.clientWidth) + 14;
-                setPromo(Math.round(el.scrollLeft / w));
+                const n = Math.round(el.scrollLeft / w);
+                if (n !== promo) setPromo(n);
               }}
               className="-mx-5 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-px-5 px-5 sm:-mx-8 sm:scroll-px-8 sm:px-8"
             >
@@ -257,7 +261,7 @@ export function MenuView() {
           </section>
 
           {/* Catégories collantes, avec pastille animée */}
-          <nav aria-label="Catégories" className="sticky top-0 z-20 -mx-5 mt-4 bg-bg/90 py-3 backdrop-blur-xl sm:-mx-8 lg:top-[76px]">
+          <nav aria-label="Catégories" className="sticky top-0 z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]">
             <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
               {TABS.map((t) => {
                 const on = active === t.id;
@@ -290,7 +294,7 @@ export function MenuView() {
 
           <div className="mt-4 space-y-10">
             {sections.map((s, i) => (
-              <section key={s.id} id={`sec-${s.id}`}>
+              <section key={s.id} id={`sec-${s.id}`} className="scroll-mt-32 [contain-intrinsic-size:auto_600px] [content-visibility:auto]">
                 <div className="mb-4 flex items-end justify-between">
                   <div>
                     <h2 className="text-[22px] font-medium tracking-tight">{s.id === "popular" ? "Les plus populaires" : s.label}</h2>

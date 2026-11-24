@@ -27,7 +27,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden"
     >
       <div
-        className="flex w-full max-w-[400px] items-center justify-between rounded-full p-2 backdrop-blur-xl"
+        className="flex w-full max-w-[400px] items-center justify-between rounded-full p-2 backdrop-blur-md"
         style={{ background: "var(--nav)", boxShadow: "var(--shadow-soft)" }}
       >
         {ITEMS.map(({ href, label, Icon }) => {

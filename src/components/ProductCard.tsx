@@ -37,7 +37,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
         }}
         aria-label={fav ? "Retirer des favoris" : "Ajouter aux favoris"}
         aria-pressed={fav}
-        className="absolute right-3 top-3 grid size-8 place-items-center rounded-full border border-ink/25 bg-white/50 text-ink backdrop-blur-sm transition active:scale-75 dark:border-white/60 dark:bg-transparent dark:text-white"
+        className="absolute right-3 top-3 grid size-8 place-items-center rounded-full border border-ink/25 bg-white/70 text-ink transition active:scale-75 dark:border-white/60 dark:bg-transparent dark:text-white"
       >
         <Heart key={String(fav)} className={`size-4 ${fav ? "bump fill-[#ff4d4d] text-[#ff4d4d]" : ""}`} strokeWidth={1.7} />
       </button>

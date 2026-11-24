@@ -39,7 +39,7 @@
   --stepper-knob-fg: #151515;
 
   /* floating nav */
-  --nav: rgba(236, 236, 236, 0.78);
+  --nav: rgba(238, 238, 238, 0.9);
   --nav-active: #ffffff;
   --nav-active-fg: #151515;
 
@@ -101,7 +101,7 @@
   --stepper-knob: #ffffff;
   --stepper-knob-fg: #151515;
 
-  --nav: rgba(72, 72, 72, 0.55);
+  --nav: rgba(52, 52, 52, 0.86);
   --nav-active: #ffffff;
   --nav-active-fg: #151515;
 
@@ -361,7 +361,17 @@ body,
   animation: slide-up 0.5s var(--ease-out) both;
 }
 
+/* Entrée douce de chaque page (léger, ne bloque jamais la navigation) */
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.page-in {
+  animation: page-in 0.28s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .page-in,
   .sheet,
   .slide-up,
   .bump,
