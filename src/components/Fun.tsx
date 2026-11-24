@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 /** Mot surligné au marqueur (trait orange dessiné à la main derrière le texte). */
 export function Marker({ children, color = "var(--orange)" }: { children: React.ReactNode; color?: string }) {
   return (
@@ -9,34 +7,6 @@ export function Marker({ children, color = "var(--orange)" }: { children: React.
       </svg>
       <span className="relative">{children}</span>
     </span>
-  );
-}
-
-/** Bandeau qui défile en continu. */
-export function Marquee({ items }: { items: { text: string; icon?: string }[] }) {
-  const row = (
-    <div className="flex shrink-0 items-center gap-6 pr-6">
-      {items.map((it, i) => (
-        <span key={i} className="flex items-center gap-6">
-          <span className="text-[17px] font-extrabold uppercase tracking-tight">{it.text}</span>
-          {it.icon ? (
-            <Image src={it.icon} alt="" width={30} height={30} unoptimized className="size-[30px] object-contain" />
-          ) : (
-            <span className="text-orange">✦</span>
-          )}
-        </span>
-      ))}
-    </div>
-  );
-  return (
-    <div className="-mx-5 overflow-hidden py-3 sm:-mx-8" aria-hidden>
-      <div className="-rotate-2 bg-[#151515] py-2.5 text-white dark:bg-white dark:text-[#151515]">
-        <div className="marquee flex w-max">
-          {row}
-          {row}
-        </div>
-      </div>
-    </div>
   );
 }
 

@@ -124,8 +124,17 @@ export function toggleFavorite(slug: string) {
 
 /* ------------------------------------------------------------- profile */
 
-/** area = code postal */
-export type Profile = { name: string; phone: string; area: string; address: string };
+/** area = code postal ; address2 = app., étage, code de porte ; lat/lon = adresse choisie sur la carte */
+export type Profile = {
+  name: string;
+  phone: string;
+  area: string;
+  address: string;
+  address2?: string;
+  city?: string;
+  lat?: number;
+  lon?: number;
+};
 const profileStore = persisted<Profile>("nemsy-profile", { name: "", phone: "", area: "", address: "" });
 
 export function useProfile() {

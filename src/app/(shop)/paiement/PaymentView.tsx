@@ -9,7 +9,9 @@ import { price } from "@/lib/format";
 import { addOrder, cartActions, computeTotals, newOrderStamp, setProfile, useCart, useProfile, type Order } from "@/lib/store";
 import { PageHeader } from "@/components/Header";
 import { celebrate } from "@/lib/fx";
-import { MapCard } from "@/components/MapCard";
+import { MapView } from "@/components/MapView";
+import { AddressSheet } from "@/components/AddressSheet";
+import { inZone } from "@/lib/geo";
 import { Checkbox, Radio } from "@/components/Option";
 
 const METHODS = [
@@ -84,6 +86,7 @@ export function PaymentView() {
   const [form, setForm] = useState<typeof saved | null>(null);
   const [terms, setTerms] = useState(false);
   const [details, setDetails] = useState(false);
+  const [picking, setPicking] = useState(false);
   const [tried, setTried] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
@@ -94,7 +97,8 @@ export function PaymentView() {
 
   const phoneOk = f.phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "").length === 10;
   const postalOk = mode === "pickup" || POSTAL.test(f.area.trim());
-  const addressOk = mode === "pickup" || f.address.trim().length > 4;
+  const zoneOk = inZone(f) !== false;
+  const addressOk = mode === "pickup" || (f.address.trim().length > 4 && zoneOk);
   const slotOk = when === "asap" || !!slot;
   const valid = f.name.trim().length > 1 && phoneOk && postalOk && addressOk && slotOk && terms && lines.length > 0;
   const err = (bad: boolean) => (tried && bad ? "!border-[#ff5a5a]" : "");
@@ -130,7 +134,7 @@ export function PaymentView() {
         "",
         `Nom : ${f.name}`,
         `Téléphone : ${f.phone}`,
-        mode === "delivery" ? `Adresse : ${f.address}, ${f.area.toUpperCase()}` : "",
+        mode === "delivery" ? `Adresse : ${f.address}${f.address2 ? `, ${f.address2}` : ""}, ${f.area.toUpperCase()}${f.lat != null ? `\nCarte : https://www.openstreetmap.org/?mlat=${f.lat}&mlon=${f.lon}#map=18/${f.lat}/${f.lon}` : ""}` : "",
       ]
         .filter((l) => l !== "")
         .join("\n");
@@ -237,25 +241,39 @@ export function PaymentView() {
       {/* Adresse */}
       {mode === "delivery" ? (
         <Card title="Adresse de livraison" icon={<MapPin className="size-5" strokeWidth={1.7} />}>
-          <div className="h-[140px] overflow-hidden rounded-[18px]">
-            <MapCard />
-          </div>
-          <input
-            className={`field mt-3 !bg-bg ${err(!addressOk)}`}
-            value={f.address}
-            onChange={update("address")}
-            placeholder="Adresse complète (rue, app.)"
-            autoComplete="street-address"
-          />
+          {f.lat != null && f.lon != null ? (
+            <>
+              <button type="button" onClick={() => setPicking(true)} className="relative block w-full overflow-hidden rounded-[18px]" aria-label="Modifier l’adresse">
+                <MapView key={`${f.lat},${f.lon}`} lat={f.lat} lon={f.lon} className="pointer-events-none h-[150px]" />
+              </button>
+              <div className="mt-3 flex items-center gap-3 px-1">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{f.address}</p>
+                  <p className="truncate text-[14px] text-muted">{[f.address2, f.city, f.area].filter(Boolean).join(" · ")}</p>
+                </div>
+                <button type="button" onClick={() => setPicking(true)} className="h-10 shrink-0 rounded-full bg-bg px-4 text-[14px] font-medium">
+                  Modifier
+                </button>
+              </div>
+              {!zoneOk && <p className="mt-2 px-1 text-[13px] text-[#ff5a5a]">Cette adresse est hors de notre zone de livraison. Choisis la cueillette ou une autre adresse.</p>}
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setPicking(true)}
+              className={`flex h-14 w-full items-center justify-center gap-2 rounded-full bg-bg text-[16px] font-medium ${tried && !addressOk ? "ring-1 ring-[#ff5a5a]" : ""}`}
+            >
+              <MapPin className="size-5" strokeWidth={1.8} /> Choisir mon adresse sur la carte
+            </button>
+          )}
         </Card>
       ) : (
         <Card title="Point de cueillette" icon={<Store className="size-5" strokeWidth={1.7} />}>
-          <div className="h-[140px] overflow-hidden rounded-[18px]">
-            <MapCard />
-          </div>
+          <MapView lat={SITE.store.lat} lon={SITE.store.lon} className="pointer-events-none h-[150px] rounded-[18px]" />
           <p className="mt-3 px-1 text-[15px] text-ink/80">{SITE.pickupAddress}</p>
         </Card>
       )}
+      <AddressSheet open={picking} onClose={() => setPicking(false)} value={f} onConfirm={(patch) => setForm({ ...f, ...patch })} />
 
       {/* Heure */}
       <Card title={mode === "delivery" ? "Heure de livraison" : "Heure de cueillette"} icon={<Clock className="size-5" strokeWidth={1.7} />}>

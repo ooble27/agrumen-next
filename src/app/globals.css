@@ -367,7 +367,7 @@ body,
   to { opacity: 1; }
 }
 .page-in {
-  animation: page-in 0.28s ease-out both;
+  animation: page-in 0.28s ease-out backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -381,16 +381,25 @@ body,
   }
 }
 
+/* Carte : tuiles un peu plus douces, et version nuit en mode sombre */
+.leaflet-tile-pane {
+  filter: saturate(0.8) contrast(0.95);
+}
+:root[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.5);
+}
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--surface);
+}
+.leaflet-control-attribution {
+  font-size: 10px;
+  border-radius: 8px 0 0 0;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Touches fun                                                        */
 /* ------------------------------------------------------------------ */
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-.marquee {
-  animation: marquee 22s linear infinite;
-}
-
 @keyframes plus-one {
   0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
   25% { transform: translate(-50%, -18px) scale(1.15); opacity: 1; }
@@ -419,7 +428,6 @@ body,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee,
   .plus-one,
   .wiggle {
     animation: none;

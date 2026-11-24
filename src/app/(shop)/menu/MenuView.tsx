@@ -8,11 +8,13 @@ import { PRODUCTS, getProduct, type Category, type Product } from "@/lib/product
 import { ETA, SITE } from "@/lib/site";
 import { discount, price } from "@/lib/format";
 import { ProductCard } from "@/components/ProductCard";
+import { AddressSheet } from "@/components/AddressSheet";
+import { setProfile, useProfile } from "@/lib/store";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogoMark } from "@/components/Logo";
 import { Food } from "@/components/Food";
 import { Sheet } from "@/components/Sheet";
-import { Marker, Marquee } from "@/components/Fun";
+import { Marker } from "@/components/Fun";
 
 type Sort = "popular" | "asc" | "desc";
 const SORTS: { id: Sort; label: string }[] = [
@@ -58,7 +60,8 @@ function greeting() {
 export function MenuView() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("popular");
-  const [sheet, setSheet] = useState<null | "sort" | "notif">(null);
+  const [sheet, setSheet] = useState<null | "sort" | "notif" | "address">(null);
+  const profile = useProfile();
   const [promo, setPromo] = useState(0);
   const [active, setActive] = useState<Tab["id"]>("popular");
   const hello = useSyncExternalStore(noop, greeting, () => null);
@@ -116,7 +119,7 @@ export function MenuView() {
     const el = document.getElementById(`sec-${id}`);
     if (!el) return;
     jumping.current = true;
-    const offset = (window.innerWidth >= 1024 ? 76 : 0) + 72;
+    const offset = (window.innerWidth >= 1024 ? 76 : 0) + 72 + (document.querySelector<HTMLElement>("[data-safe-top]")?.offsetHeight ?? 0);
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
     window.setTimeout(() => (jumping.current = false), 700);
   };
@@ -139,13 +142,13 @@ export function MenuView() {
       {/* En-tête mobile */}
       <header className="flex items-center gap-3 lg:hidden">
         <LogoMark className="size-12" />
-        <div className="min-w-0">
-          <p className="text-[12px] leading-none text-muted">Livrer à</p>
-          <p className="mt-1 flex items-center gap-1 text-[16px] font-medium leading-none">
-            <span className="truncate">{SITE.city}</span>
-            <ChevronDown className="size-4 text-muted" strokeWidth={2} />
-          </p>
-        </div>
+        <button type="button" onClick={() => setSheet("address")} className="min-w-0 text-left transition active:opacity-60">
+          <span className="block text-[12px] leading-none text-muted">Livrer à</span>
+          <span className="mt-1 flex items-center gap-1 text-[16px] font-medium leading-none">
+            <span className="truncate">{profile.address || "Choisir mon adresse"}</span>
+            <ChevronDown className="size-4 shrink-0 text-muted" strokeWidth={2} />
+          </span>
+        </button>
         <div className="ml-auto flex gap-2.5">
           <button
             type="button"
@@ -262,17 +265,8 @@ export function MenuView() {
             </div>
           </section>
 
-          <Marquee
-            items={[
-              { text: "Croustillant", icon: "/food/nems-poulet.svg" },
-              { text: "Fait maison", icon: "/food/samoussas.svg" },
-              { text: "Tout chaud", icon: "/food/raviolis-vapeur.svg" },
-              { text: "Livré vite", icon: "/food/degue.svg" },
-            ]}
-          />
-
           {/* Catégories collantes */}
-          <nav aria-label="Catégories" className="sticky top-0 z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]">
+          <nav aria-label="Catégories" className="sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]">
             <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
               {TABS.map((t) => {
                 const on = active === t.id;
@@ -323,6 +317,13 @@ export function MenuView() {
           </div>
         </>
       )}
+
+      <AddressSheet
+        open={sheet === "address"}
+        onClose={() => setSheet(null)}
+        value={profile}
+        onConfirm={(patch) => setProfile({ ...profile, ...patch })}
+      />
 
       <Sheet open={sheet === "sort"} onClose={() => setSheet(null)} title="Trier par">
         <div className="space-y-1">
