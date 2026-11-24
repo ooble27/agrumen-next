@@ -11,7 +11,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { AddressSheet } from "@/components/AddressSheet";
 import { setProfile, useProfile } from "@/lib/store";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogoMark } from "@/components/Logo";
+import { Avatar } from "@/components/Avatar";
 import { Food } from "@/components/Food";
 import { Sheet } from "@/components/Sheet";
 import { Marker } from "@/components/Fun";
@@ -141,7 +141,9 @@ export function MenuView() {
     <main className="mx-auto min-h-dvh w-full max-w-6xl px-5 pb-56 pt-[max(16px,env(safe-area-inset-top))] sm:px-8 lg:pb-20 lg:pt-8">
       {/* En-tête mobile */}
       <header className="flex items-center gap-3 lg:hidden">
-        <LogoMark className="size-12" />
+        <Link href="/profil" aria-label="Mon profil" className="transition active:scale-90">
+          <Avatar profile={profile} className="size-12 text-[17px]" />
+        </Link>
         <button type="button" onClick={() => setSheet("address")} className="min-w-0 text-left transition active:opacity-60">
           <span className="block text-[12px] leading-none text-muted">Livrer à</span>
           <span className="mt-1 flex items-center gap-1 text-[16px] font-medium leading-none">

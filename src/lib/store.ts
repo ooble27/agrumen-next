@@ -134,6 +134,8 @@ export type Profile = {
   city?: string;
   lat?: number;
   lon?: number;
+  /** "a1"…"a12" (avatar dessiné) ou une photo (data URL JPEG 256 px) */
+  avatar?: string;
 };
 const profileStore = persisted<Profile>("nemsy-profile", { name: "", phone: "", area: "", address: "" });
 

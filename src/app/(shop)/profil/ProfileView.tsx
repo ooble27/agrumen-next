@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronRight, Heart, MapPin, MessageCircle, Monitor, Moon, Pencil, RotateCcw, Sparkles, Sun, User } from "lucide-react";
+import { Camera, ChevronRight, Heart, MapPin, MessageCircle, Monitor, Moon, Pencil, RotateCcw, Sparkles, Sun, User } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { price } from "@/lib/format";
 import { getProduct } from "@/lib/products";
@@ -12,6 +12,8 @@ import { Food } from "@/components/Food";
 import { Sheet } from "@/components/Sheet";
 import { AddressSheet } from "@/components/AddressSheet";
 import { Logo } from "@/components/Logo";
+import { Avatar } from "@/components/Avatar";
+import { AvatarSheet } from "@/components/AvatarSheet";
 
 const THEMES: { id: ThemePref; label: string; Icon: typeof Sun }[] = [
   { id: "light", label: "Clair", Icon: Sun },
@@ -75,17 +77,10 @@ export function ProfileView() {
   const orders = useOrders();
   const favs = useFavorites();
   const theme = useThemePref();
-  const [sheet, setSheet] = useState<null | "infos" | "address">(null);
+  const [sheet, setSheet] = useState<null | "infos" | "address" | "avatar">(null);
   const [draft, setDraft] = useState({ name: "", phone: "" });
 
   const first = profile.name.trim().split(/\s+/)[0];
-  const initials = profile.name
-    .trim()
-    .split(/\s+/)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
   const spent = orders.reduce((s, o) => s + o.total, 0);
 
   return (
@@ -95,9 +90,12 @@ export function ProfileView() {
       {/* Carte d'identité */}
       <section className="mt-5 overflow-hidden rounded-[28px] bg-[#151515] p-5 text-white dark:bg-surface">
         <div className="flex items-center gap-4">
-          <span className="grid size-16 shrink-0 place-items-center rounded-full bg-orange text-[22px] font-bold">
-            {initials || <User className="size-7" strokeWidth={1.8} />}
-          </span>
+          <button type="button" onClick={() => setSheet("avatar")} aria-label="Changer mon avatar" className="relative shrink-0 transition active:scale-95">
+            <Avatar profile={profile} className="size-[68px] text-[22px] ring-[3px] ring-white/15" />
+            <span className="absolute -bottom-0.5 -right-0.5 grid size-7 place-items-center rounded-full bg-white text-[#151515] ring-[3px] ring-[#151515] dark:ring-surface">
+              <Camera className="size-3.5" strokeWidth={2.2} />
+            </span>
+          </button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[21px] font-semibold leading-tight">{profile.name || "Ton nom"}</p>
             <p className="mt-0.5 truncate text-[14px] text-white/60">{profile.phone || "Ajoute ton numéro pour commander plus vite"}</p>
@@ -284,6 +282,7 @@ export function ProfileView() {
         </form>
       </Sheet>
 
+      <AvatarSheet open={sheet === "avatar"} onClose={() => setSheet(null)} profile={profile} onChange={(avatar) => setProfile({ ...profile, avatar })} />
       <AddressSheet open={sheet === "address"} onClose={() => setSheet(null)} value={profile} onConfirm={(patch) => setProfile({ ...profile, ...patch })} />
     </main>
   );
