@@ -455,3 +455,8 @@ body,
 .track-live {
   animation: track-live 1.4s ease-in-out infinite;
 }
+
+/* Camionnette du suivi : phares allumés en mode sombre */
+.van-night { display: none; }
+:root[data-theme="dark"] .van-day { display: none; }
+:root[data-theme="dark"] .van-night { display: block; }

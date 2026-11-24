@@ -57,14 +57,19 @@ export function isActive(o: Order | undefined, now: number) {
 }
 
 const COURIERS = [
-  { name: "Moussa", avatar: "adv-02", vehicle: "Scooter" },
-  { name: "Inès", avatar: "adv-05", vehicle: "Vélo" },
-  { name: "Karim", avatar: "adv-06", vehicle: "Scooter" },
-  { name: "Aminata", avatar: "adv-09", vehicle: "Scooter" },
+  { name: "Moussa", avatar: "adv-02", vehicle: "Camionnette" },
+  { name: "Inès", avatar: "adv-05", vehicle: "Camionnette" },
+  { name: "Karim", avatar: "adv-06", vehicle: "Camionnette" },
+  { name: "Aminata", avatar: "adv-09", vehicle: "Camionnette" },
 ];
 export function courierFor(o: Order) {
   const n = [...o.id].reduce((s, c) => s + c.charCodeAt(0), 0);
   return COURIERS[n % COURIERS.length];
+}
+
+/** Fenêtre du trajet du livreur (début et fin), en timestamps. */
+export function rideWindow(o: Order) {
+  return { start: o.createdAt + PREP * MIN, end: o.createdAt + SITE.etaMax * MIN };
 }
 
 /** Point de livraison (adresse choisie, sinon un point proche du resto). */
