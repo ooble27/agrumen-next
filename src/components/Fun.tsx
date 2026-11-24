@@ -1,11 +1,11 @@
-/** Mot surligné au marqueur (trait orange dessiné à la main derrière le texte). */
+/** Mot souligné d'un trait fin tracé à la main (comme au stylo). */
 export function Marker({ children, color = "var(--orange)" }: { children: React.ReactNode; color?: string }) {
   return (
     <span className="relative inline-block whitespace-nowrap">
-      <svg aria-hidden viewBox="0 0 200 24" preserveAspectRatio="none" className="absolute bottom-[0.04em] left-[-4%] h-[0.5em] w-[108%]">
-        <path d="M4 14 C 40 6, 90 4, 196 9 L 194 20 C 120 15, 60 17, 6 22 Z" fill={color} opacity=".55" />
-      </svg>
       <span className="relative">{children}</span>
+      <svg aria-hidden viewBox="0 0 120 12" preserveAspectRatio="none" className="pointer-events-none absolute -bottom-[0.16em] left-[2%] h-[0.28em] w-[96%] overflow-visible">
+        <path d="M2 8.5 C 30 3.5, 70 2.5, 118 6" fill="none" stroke={color} strokeWidth="3.2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      </svg>
     </span>
   );
 }

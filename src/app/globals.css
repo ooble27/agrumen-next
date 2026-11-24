@@ -436,3 +436,22 @@ body,
     display: none;
   }
 }
+
+/* Livreur : léger battement */
+@keyframes courier-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.courier-pulse {
+  animation: courier-pulse 1.6s ease-in-out infinite;
+}
+
+/* Étape en cours du suivi : reflet qui passe */
+@keyframes track-live {
+  0% { opacity: 0.55; }
+  50% { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+.track-live {
+  animation: track-live 1.4s ease-in-out infinite;
+}

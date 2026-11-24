@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Bell, Bike, Check, ChevronDown, Clock, Flame, Search, SlidersHorizontal, Star, X } from "lucide-react";
+import { ArrowRight, Bell, Bike, Check, ChevronDown, Clock, Flame, Search, SlidersHorizontal, Star, X } from "lucide-react";
 import { PRODUCTS, getProduct, type Category, type Product } from "@/lib/products";
 import { ETA, SITE } from "@/lib/site";
 import { discount, price } from "@/lib/format";
@@ -39,10 +39,15 @@ function off(slug: string) {
   return p?.oldPrice ? `-${discount(p.price, p.oldPrice)}%` : "";
 }
 
+const promoPrice = (slug: string) => {
+  const p = getProduct(slug);
+  return p?.oldPrice ? `${price(p.price)} au lieu de ${price(p.oldPrice)}` : "";
+};
+
 const PROMOS = [
-  { title: "Nems au poulet", big: off("nems-poulet"), href: "/produit/nems-poulet", image: "/food/nems-poulet.svg", bg: "var(--promo-1)" },
-  { title: "Livraison offerte", big: "0 $", cta: `Dès ${price(SITE.freeDeliveryFrom)}`, href: "/panier", image: "/food/poulet-croustillant.svg", bg: "var(--promo-2)" },
-  { title: "Samoussas maison", big: off("samoussas"), href: "/produit/samoussas", image: "/food/samoussas.svg", bg: "var(--promo-1)" },
+  { tag: off("nems-poulet"), title: "Nems au poulet", sub: promoPrice("nems-poulet"), href: "/produit/nems-poulet", image: "/food/nems-poulet.svg", bg: "#0F5132", glow: "#3FB868", tagBg: "#FF7A1A" },
+  { tag: "Offert", title: "Livraison gratuite", sub: `Dès ${price(SITE.freeDeliveryFrom)} d’achat`, href: "/panier", image: "/food/poulet-croustillant.svg", bg: "#F26B12", glow: "#FFB25C", tagBg: "#151515" },
+  { tag: off("samoussas"), title: "Samoussas maison", sub: promoPrice("samoussas"), href: "/produit/samoussas", image: "/food/samoussas.svg", bg: "#151515", glow: "#FF7A1A", tagBg: "#FF7A1A" },
 ];
 
 const norm = (s: string) =>
@@ -119,7 +124,8 @@ export function MenuView() {
     const el = document.getElementById(`sec-${id}`);
     if (!el) return;
     jumping.current = true;
-    const offset = (window.innerWidth >= 1024 ? 76 : 0) + 72 + (document.querySelector<HTMLElement>("[data-safe-top]")?.offsetHeight ?? 0);
+    const bar = document.querySelector<HTMLElement>('nav[aria-label="Catégories"]');
+    const offset = bar ? parseFloat(getComputedStyle(bar).top) + bar.offsetHeight : 72;
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
     window.setTimeout(() => (jumping.current = false), 700);
   };
@@ -235,26 +241,23 @@ export function MenuView() {
                 <Link
                   key={p.title}
                   href={p.href}
-                  className="press relative h-[160px] w-[86%] max-w-[440px] shrink-0 snap-start overflow-hidden rounded-[26px] sm:w-[420px]"
+                  className="press relative h-[172px] w-[88%] max-w-[440px] shrink-0 snap-start overflow-hidden rounded-[28px] text-white sm:w-[420px]"
                   style={{ background: p.bg }}
                 >
-                  <span className="absolute -right-3 top-1/2 h-[130%] w-[56%] -translate-y-1/2">
+                  {/* halo lumineux derrière le plat */}
+                  <span aria-hidden className="absolute -right-10 top-1/2 size-[230px] -translate-y-1/2 rounded-full opacity-60 blur-2xl" style={{ background: p.glow }} />
+                  <span aria-hidden className="absolute -right-6 top-1/2 size-[190px] -translate-y-1/2 rounded-full border border-white/15" />
+                  <span className="absolute -right-4 top-1/2 h-[118%] w-[54%] -translate-y-1/2">
                     <Food src={p.image} alt="" priority={i === 0} sizes="240px" className="size-full" />
                   </span>
-                  <div className="relative flex h-full w-[62%] flex-col justify-between p-5">
-                    <div>
-                      <p className="text-[20px] font-semibold leading-none tracking-tight" style={{ color: "var(--promo-title)" }}>
-                        {p.title}
-                      </p>
-                      <p
-                        className="mt-1.5 text-[60px] font-extrabold leading-[0.92] tracking-[-0.04em]"
-                        style={{ backgroundImage: "var(--promo-big)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}
-                      >
-                        {p.big}
-                      </p>
-                    </div>
-                    <span className="inline-flex h-9 w-fit items-center rounded-full bg-orange px-4 text-[13px] font-medium text-white shadow-[0_8px_18px_-8px_rgba(247,163,37,.9)]">
-                      {p.cta ?? "Commander"}
+                  <div className="relative flex h-full w-[60%] flex-col p-5">
+                    <span className="w-fit rounded-full px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide" style={{ background: p.tagBg }}>
+                      {p.tag}
+                    </span>
+                    <p className="mt-3 text-[19px] font-semibold leading-[1.1] tracking-tight">{p.title}</p>
+                    <p className="mt-1 text-[13px] leading-snug text-white/70">{p.sub}</p>
+                    <span className="mt-auto inline-flex h-9 w-fit items-center gap-1.5 rounded-full bg-white px-4 text-[13px] font-semibold text-[#151515]">
+                      Commander <ArrowRight className="size-3.5" strokeWidth={2.4} />
                     </span>
                   </div>
                 </Link>
