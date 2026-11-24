@@ -1,6 +1,6 @@
 # Nemsy
 
-Application web de commande de nems et snacks, livrés au Canada. Prix en dollars canadiens, taxes TPS + TVQ incluses au paiement. Mobile-first, avec un mode clair et un mode sombre.
+Application web de commande de nems et snacks, livrés au Canada. Mobile-first, avec un thème clair et un thème sombre. Prix en dollars canadiens, taxes TPS + TVQ.
 
 ## Démarrer
 
@@ -14,19 +14,20 @@ npm run dev
 | Route | Écran |
 | --- | --- |
 | `/` | Accueil « Nems livrés tout chauds » |
-| `/menu` | Catalogue : recherche, tri, promos, catégories |
-| `/produit/[slug]` | Fiche produit |
-| `/panier` | Panier |
-| `/paiement` | Paiement (virement Interac, carte ou comptant à la livraison) et adresse |
-| `/confirmation` | Commande confirmée |
-| `/favoris`, `/profil` | Favoris, coordonnées et thème |
+| `/menu` | Recherche, tri, promos, catégories, sections du menu |
+| `/produit/[slug]` | Fiche produit : options, suppléments, instructions |
+| `/panier` | Panier et suggestions |
+| `/paiement` | Livraison ou cueillette, heure, paiement, pourboire |
+| `/confirmation` | Commande confirmée et suivi |
+| `/favoris`, `/profil` | Favoris, historique, coordonnées, thème |
 
 ## Personnaliser
 
-- **Nom, ville, numéro WhatsApp, frais de livraison, taxes** : `src/lib/site.ts`
-- **Produits, prix, photos** : `src/lib/products.ts` (photos dans `public/img`)
+- **Nom, ville, numéro WhatsApp, frais, taxes, horaires** : `src/lib/site.ts`
+- **Produits, prix, options, photos** : `src/lib/products.ts`. Les images sont des PNG/WebP détourés, sur fond transparent, dans `public/food`.
 - **Couleurs des deux thèmes** : `src/app/globals.css`
+- **Logo** : `src/components/Logo.tsx`
 
-Les commandes partent sur WhatsApp au numéro défini dans `SITE.whatsapp`. Panier, favoris et profil sont gardés dans le navigateur du client.
+Les commandes sont envoyées sur WhatsApp au numéro défini dans `SITE.whatsapp`.
 
-Photos : [Unsplash](https://unsplash.com/license).
+Photos d'origine : [Unsplash](https://unsplash.com/license). Elles ont été détourées.
