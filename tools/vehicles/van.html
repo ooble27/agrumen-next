@@ -1,0 +1,122 @@
+<!doctype html><html><body style="margin:0;background:#0000">
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+
+const W = 512;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(W, W);
+renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+
+function mat(c, o = {}) { return new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0.05, ...o }); }
+
+function logoTexture() {
+  const c = document.createElement("canvas"); c.width = c.height = 256;
+  const g = c.getContext("2d");
+  g.fillStyle = "#FF7A1A"; g.beginPath(); g.roundRect(8, 8, 240, 240, 48); g.fill();
+  g.fillStyle = "#fff"; g.font = "900 150px Arial"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("n", 112, 120);
+  g.fillStyle = "#151515"; g.beginPath(); g.arc(178, 168, 20, 0, Math.PI * 2); g.fill();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+function buildVan(night) {
+  const van = new THREE.Group();
+  const white = mat(0xf4f3ef, { roughness: 0.45 });
+  const glass = mat(0x1b2128, { roughness: 0.15, metalness: 0.4 });
+  const dark = mat(0x1a1a1a, { roughness: 0.8 });
+  const orange = mat(0xff7a1a, { roughness: 0.5 });
+
+  // caisse (arrière) + cabine (avant), axe z = longueur, avant vers -z
+  const box = new THREE.Mesh(new RoundedBoxGeometry(2.0, 2.05, 3.2, 6, 0.18), white);
+  box.position.set(0, 1.35, 0.55); box.castShadow = true; van.add(box);
+  const cab = new THREE.Mesh(new RoundedBoxGeometry(1.95, 1.55, 1.55, 6, 0.3), white);
+  cab.position.set(0, 1.1, -1.55); cab.castShadow = true; van.add(cab);
+  const hood = new THREE.Mesh(new RoundedBoxGeometry(1.9, 0.75, 0.9, 6, 0.28), white);
+  hood.position.set(0, 0.72, -2.35); hood.castShadow = true; van.add(hood);
+  // pare-brise incliné
+  const ws = new THREE.Mesh(new RoundedBoxGeometry(1.7, 0.95, 0.12, 4, 0.05), glass);
+  ws.position.set(0, 1.45, -2.18); ws.rotation.x = -0.55; van.add(ws);
+  // vitres latérales cabine
+  for (const s of [-1, 1]) {
+    const sw = new THREE.Mesh(new RoundedBoxGeometry(0.06, 0.6, 0.95, 3, 0.03), glass);
+    sw.position.set(s * 0.98, 1.45, -1.55); van.add(sw);
+    // bande orange sur la caisse
+    const st = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 3.0), orange);
+    st.position.set(s * 1.01, 0.75, 0.55); van.add(st);
+    // rétroviseurs
+    const mr = new THREE.Mesh(new RoundedBoxGeometry(0.28, 0.22, 0.12, 2, 0.04), dark);
+    mr.position.set(s * 1.12, 1.45, -2.0); van.add(mr);
+  }
+  // logo sur le toit
+  const roof = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshStandardMaterial({ map: logoTexture(), roughness: 0.6, transparent: true }));
+  roof.rotation.x = -Math.PI / 2; roof.position.set(0, 2.385, 0.55); van.add(roof);
+  // roues
+  for (const [x, z] of [[-0.95, -1.75], [0.95, -1.75], [-0.95, 1.4], [0.95, 1.4]]) {
+    const w = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.32, 24), dark);
+    w.rotation.z = Math.PI / 2; w.position.set(x, 0.42, z); w.castShadow = true; van.add(w);
+  }
+  // phares / feux
+  const hl = mat(0xfff3c4, { emissive: 0xfff0b0, emissiveIntensity: night ? 2.2 : 0.4 });
+  const tl = mat(0xff2a2a, { emissive: 0xff1a1a, emissiveIntensity: night ? 1.6 : 0.5 });
+  for (const s of [-1, 1]) {
+    const h = new THREE.Mesh(new RoundedBoxGeometry(0.42, 0.2, 0.08, 2, 0.04), hl); h.position.set(s * 0.62, 0.85, -2.82); van.add(h);
+    const t = new THREE.Mesh(new RoundedBoxGeometry(0.16, 0.42, 0.06, 2, 0.03), tl); t.position.set(s * 0.85, 0.95, 2.17); van.add(t);
+  }
+  return van;
+}
+
+function render(mode, view) {
+  const night = mode === "night";
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, night ? 1.2 : 1.8));
+  const sun = new THREE.DirectionalLight(0xffffff, night ? 1.4 : 2.4);
+  sun.position.set(-4, 10, -3); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048); sun.shadow.radius = 8; sun.shadow.blurSamples = 20;
+  Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 0.5, far: 30 });
+  scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: night ? 0.45 : 0.28 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const van = buildVan(night); scene.add(van);
+
+  if (night) {
+    // faisceaux des phares sur la route
+    const c = document.createElement("canvas"); c.width = 128; c.height = 256;
+    const g = c.getContext("2d"); const grd = g.createLinearGradient(0, 256, 0, 0);
+    grd.addColorStop(0, "rgba(255,236,170,.85)"); grd.addColorStop(1, "rgba(255,236,170,0)");
+    g.fillStyle = grd; g.beginPath(); g.moveTo(52, 256); g.lineTo(76, 256); g.lineTo(128, 0); g.lineTo(0, 0); g.closePath(); g.fill();
+    const tex = new THREE.CanvasTexture(c);
+    for (const s of [-1, 1]) {
+      const beam = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.6), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      beam.rotation.x = -Math.PI / 2; beam.position.set(s * 0.62, 0.02, -4.6); scene.add(beam);
+    }
+  }
+
+  let cam;
+  if (view === "top") {
+    const s = 3.6;
+    cam = new THREE.OrthographicCamera(-s, s, s, -s, 0.1, 100);
+    cam.position.set(0, 20, -0.6); cam.up.set(0, 0, -1); cam.lookAt(0, 0, -0.6);
+  } else {
+    const s = 4.6;
+    cam = new THREE.OrthographicCamera(-s, s, s, -s, 0.1, 100);
+    cam.position.set(9, 9, -9); cam.lookAt(0, 0.9, -0.4);
+  }
+  renderer.render(scene, cam);
+  return renderer.domElement.toDataURL("image/png");
+}
+
+window.result = {
+  topDay: render("day", "top"),
+  topNight: render("night", "top"),
+  isoDay: render("day", "iso"),
+  isoNight: render("night", "iso"),
+};
+window.ready = true;
+</script></body></html>

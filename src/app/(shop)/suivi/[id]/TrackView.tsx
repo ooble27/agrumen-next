@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Bike, Check, ChefHat, ChevronDown, ChevronLeft, MessageCircle, Package, Phone, Star, Store } from "lucide-react";
+import { Check, ChefHat, ChevronDown, ChevronLeft, MessageCircle, Package, Phone, Star, Store, Truck } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { price } from "@/lib/format";
 import { useOrders } from "@/lib/store";
 import { useNow } from "@/lib/now";
-import { courierFor, destination, trackOrder } from "@/lib/tracking";
+import { courierFor, destination, rideWindow, trackOrder } from "@/lib/tracking";
 import { TrackingMap } from "@/components/TrackingMap";
 import { MapView } from "@/components/MapView";
 
@@ -42,7 +42,7 @@ export function TrackView({ id }: { id: string }) {
   const pickup = order.mode === "pickup";
   const courier = courierFor(order);
   const to = destination(order);
-  const icons = pickup ? [Check, ChefHat, Package, Store] : [Check, ChefHat, Bike, Package];
+  const icons = pickup ? [Check, ChefHat, Package, Store] : [Check, ChefHat, Truck, Package];
   const onTheWay = tr.stage === "onTheWay" || tr.stage === "arriving";
 
   return (
@@ -52,7 +52,7 @@ export function TrackView({ id }: { id: string }) {
         {pickup ? (
           <MapView lat={SITE.store.lat} lon={SITE.store.lon} className="h-full w-full" />
         ) : (
-          <TrackingMap from={SITE.store} to={to} courier={tr.courier} showCourier={onTheWay || tr.done} className="h-full w-full" />
+          <TrackingMap from={SITE.store} to={to} ride={rideWindow(order)} className="h-full w-full" />
         )}
         <div className="absolute inset-x-0 top-0 z-[500] flex items-center justify-between px-4 pt-[max(14px,env(safe-area-inset-top))]">
           <button
