@@ -39,7 +39,7 @@ export function ProfileView() {
         <span className="grid size-16 place-items-center rounded-full bg-brand text-[22px] font-semibold text-white">{initials || <User className="size-7" strokeWidth={1.6} />}</span>
         <div className="min-w-0">
           <p className="truncate text-[20px] font-medium">{f.name || "Bienvenue"}</p>
-          <p className="truncate text-muted">{f.phone || "Vos infos pré-remplissent le paiement"}</p>
+          <p className="truncate text-muted">{f.phone || "Tes infos pré-remplissent le paiement"}</p>
         </div>
       </div>
 

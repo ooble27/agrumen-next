@@ -28,6 +28,7 @@ export type Product = {
   description: string;
   options?: OptionGroup[];
   popular?: boolean;
+  isNew?: boolean;
 };
 
 export const CATEGORIES: { id: "all" | Category; label: string }[] = [
@@ -304,6 +305,7 @@ export const PRODUCTS: Product[] = [
       "Dessert d’Afrique de l’Ouest : petits grains de mil roulés à la main, mélangés à du lait caillé sucré et parfumé à la vanille. Servi bien frais.",
     options: [SAVEUR_DEGUE, FORMAT_DEGUE, EXTRAS_DEGUE],
     popular: true,
+    isNew: true,
   },
   {
     slug: "limonade-fraise",

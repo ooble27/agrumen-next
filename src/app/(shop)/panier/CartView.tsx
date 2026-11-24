@@ -10,6 +10,7 @@ import { haptic } from "@/lib/fx";
 import { PageHeader } from "@/components/Header";
 import { Food } from "@/components/Food";
 import { SwipeRow } from "@/components/SwipeRow";
+import { Marker } from "@/components/Fun";
 
 export function CartView() {
   const { lines, subtotal } = useCart();
@@ -27,8 +28,8 @@ export function CartView() {
           <span className="grid size-24 place-items-center rounded-full bg-surface">
             <ShoppingBag className="size-10 text-muted" strokeWidth={1.3} />
           </span>
-          <h2 className="mt-6 text-[22px] font-medium">Votre panier est vide</h2>
-          <p className="mt-2 max-w-xs text-muted">Des nems tout chauds vous attendent dans le menu.</p>
+          <h2 className="mt-6 text-[26px] font-medium tracking-tight">Ton panier a <Marker>faim</Marker></h2>
+          <p className="mt-2 max-w-xs text-muted">Des nems tout chauds t’attendent dans le menu.</p>
           <Link href="/menu" className="mt-8 inline-flex h-14 items-center rounded-full bg-btn px-8 text-[16px] font-medium text-btn-fg">
             Voir le menu
           </Link>
@@ -75,12 +76,12 @@ export function CartView() {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-center text-[12px] text-faint lg:hidden">Glissez une ligne vers la gauche pour la retirer</p>
+          <p className="mt-3 text-center text-[12px] text-faint lg:hidden">Glisse une ligne vers la gauche pour la retirer</p>
 
           {/* Suggestions */}
           {suggestions.length > 0 && (
             <section className="mt-9">
-              <h2 className="text-[19px] font-medium">Ça irait bien avec</h2>
+              <h2 className="text-[19px] font-medium">Ça irait trop bien avec</h2>
               <div className="-mx-5 mt-3 flex gap-3 overflow-x-auto px-5">
                 {suggestions.map((p) => (
                   <div key={p.slug} className={`tint-${p.tint} relative w-[132px] shrink-0 overflow-hidden rounded-[22px] p-2.5`}>

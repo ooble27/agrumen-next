@@ -8,6 +8,7 @@ import { ETA, SITE } from "@/lib/site";
 import { price } from "@/lib/format";
 import { addOrder, cartActions, computeTotals, newOrderStamp, setProfile, useCart, useProfile, type Order } from "@/lib/store";
 import { PageHeader } from "@/components/Header";
+import { celebrate } from "@/lib/fx";
 import { MapCard } from "@/components/MapCard";
 import { Checkbox, Radio } from "@/components/Option";
 
@@ -139,6 +140,7 @@ export function PaymentView() {
     setProfile(f);
     addOrder(order);
     cartActions.clear();
+    celebrate();
     router.push("/confirmation");
   };
 
@@ -275,7 +277,7 @@ export function PaymentView() {
           </label>
         </div>
         {when === "later" && timeSlots.length === 0 && (
-          <p className="mt-2 px-1 text-[14px] text-muted">Plus de créneau disponible aujourd’hui. Choisissez « Dès que possible ».</p>
+          <p className="mt-2 px-1 text-[14px] text-muted">Plus de créneau disponible aujourd’hui. Choisis « Dès que possible ».</p>
         )}
         {when === "later" && timeSlots.length > 0 && (
           <div className={`mt-2 flex gap-2 overflow-x-auto rounded-2xl ${tried && !slot ? "ring-1 ring-[#ff5a5a]" : ""}`}>
@@ -372,7 +374,7 @@ export function PaymentView() {
         >
           Passer la commande
         </button>
-        {tried && !valid && <p className="mt-3 text-center text-[13px] text-[#ff5a5a]">Complétez les champs en rouge pour continuer.</p>}
+        {tried && !valid && <p className="mt-3 text-center text-[13px] text-[#ff5a5a]">Complète les champs en rouge pour continuer.</p>}
       </section>
     </main>
   );

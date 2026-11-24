@@ -6,6 +6,9 @@ import { ETA, SITE } from "@/lib/site";
 import { price } from "@/lib/format";
 import { useOrders } from "@/lib/store";
 import { BoxIllustration } from "@/components/BoxIllustration";
+import { Confetti, Marker } from "@/components/Fun";
+import { endCelebration, useCelebration } from "@/lib/fx";
+import { useEffect } from "react";
 
 function at(ts: number) {
   return new Date(ts).toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
@@ -13,6 +16,12 @@ function at(ts: number) {
 
 export function ConfirmationView() {
   const order = useOrders()[0];
+  const party = useCelebration();
+  useEffect(() => {
+    if (!party) return;
+    const t = window.setTimeout(endCelebration, 4000);
+    return () => window.clearTimeout(t);
+  }, [party]);
   const pickup = order?.mode === "pickup";
 
   const steps = [
@@ -23,15 +32,16 @@ export function ConfirmationView() {
   ];
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(36px,env(safe-area-inset-top))] lg:pt-12">
+    <main className="relative mx-auto flex min-h-dvh w-full max-w-xl flex-col px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(36px,env(safe-area-inset-top))] lg:pt-12">
+      {party && <Confetti />}
       <div className="flex flex-1 flex-col items-center text-center">
         <BoxIllustration className="rise w-[250px] text-ink sm:w-[290px]" />
 
         <h1 className="rise mt-5 whitespace-nowrap text-[32px] font-semibold tracking-tight sm:text-[40px] [animation-delay:120ms]">
-          Commande confirmée
+          Commande <Marker>confirmée</Marker>
         </h1>
         <p className="rise mt-3 text-[16px] leading-relaxed text-ink/70 [animation-delay:180ms]">
-          Votre commande a bien été envoyée
+          Ta commande est bien partie !
           <br />
           {order ? (
             <>
@@ -68,7 +78,7 @@ export function ConfirmationView() {
                       <span className="flex-1">
                         <span className={`block text-[15px] ${done || i === 1 ? "text-ink" : "text-muted"}`}>{label}</span>
                         {done && <span className="text-[13px] text-muted">{at(order.createdAt)}</span>}
-                        {i === 1 && <span className="text-[13px] text-muted">On vous confirme par téléphone</span>}
+                        {i === 1 && <span className="text-[13px] text-muted">On te confirme par téléphone</span>}
                       </span>
                     </li>
                   );

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { Check, Heart, Plus } from "lucide-react";
 import { defaultOptions, type Product } from "@/lib/products";
-import { price } from "@/lib/format";
+import { discount, price } from "@/lib/format";
+import { Sticker } from "./Fun";
 import { cartActions, toggleFavorite, useFavorites } from "@/lib/store";
 import { flyToCart, haptic } from "@/lib/fx";
 import { Food } from "./Food";
@@ -12,6 +13,7 @@ import { Food } from "./Food";
 export function ProductCard({ product, priority }: { product: Product; priority?: boolean }) {
   const fav = useFavorites().includes(product.slug);
   const [added, setAdded] = useState(false);
+  const [pops, setPops] = useState(0);
   const imgRef = useRef<HTMLAnchorElement>(null);
   const href = `/produit/${product.slug}`;
 
@@ -20,6 +22,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
     cartActions.add(product.slug, 1, opts);
     flyToCart(imgRef.current);
     setAdded(true);
+    setPops((n) => n + 1);
     window.setTimeout(() => setAdded(false), 1100);
   };
 
@@ -28,6 +31,16 @@ export function ProductCard({ product, priority }: { product: Product; priority?
       <Link ref={imgRef} href={href} className="block px-3 pt-4" aria-label={product.name}>
         <Food src={product.image} alt={product.name} priority={priority} sizes="(min-width: 1024px) 240px, 45vw" className="mx-auto aspect-[1/0.8] w-full" />
       </Link>
+
+      <span className="pointer-events-none absolute left-2.5 top-2.5 z-10">
+        {product.oldPrice ? (
+          <Sticker kind="promo" label={`-${discount(product.price, product.oldPrice)}%`} />
+        ) : product.isNew ? (
+          <Sticker kind="new" label="Nouveau" />
+        ) : product.popular ? (
+          <Sticker kind="top" label="Top" />
+        ) : null}
+      </span>
 
       <button
         type="button"
@@ -54,11 +67,17 @@ export function ProductCard({ product, priority }: { product: Product; priority?
       </div>
 
       <div className="notch">
+        {pops > 0 && (
+          <span key={pops} className="plus-one pointer-events-none absolute left-1/2 top-0 z-10 rounded-full bg-orange px-2 py-0.5 text-[12px] font-extrabold text-white">
+            +1
+          </span>
+        )}
         <button
           type="button"
           aria-label={`Ajouter ${product.name} au panier`}
           onClick={add}
-          className="grid size-[42px] place-items-center rounded-[14px] bg-plus text-plus-fg transition duration-300 active:scale-90"
+          key={pops}
+          className={`grid size-[42px] place-items-center rounded-[14px] bg-plus text-plus-fg transition duration-300 active:scale-90 ${pops ? "wiggle" : ""}`}
         >
           <span key={String(added)} className="pop grid place-items-center">
             {added ? <Check className="size-5" strokeWidth={2.2} /> : <Plus className="size-[22px]" strokeWidth={1.6} />}

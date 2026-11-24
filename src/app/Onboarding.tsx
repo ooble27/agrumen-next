@@ -46,7 +46,7 @@ const SLIDES = [
   {
     title: (
       <>
-        <span className="block">Commandez</span>
+        <span className="block">Commande</span>
         <span className="flex items-center gap-3">
           en deux <Rings />
         </span>
@@ -55,7 +55,7 @@ const SLIDES = [
         </span>
       </>
     ),
-    text: "Choisissez vos plats, vos sauces et vos extras. Payez par Interac, par carte ou comptant.",
+    text: "Choisis tes plats, tes sauces et tes extras. Paie par Interac, par carte ou comptant.",
     art: [
       { src: "/food/samoussas.svg", cls: "left-[-2%] top-[28%] w-[74%]" },
       { src: "/food/limonade-fraise.svg", cls: "right-[2%] top-[0%] w-[50%]" },
@@ -69,11 +69,11 @@ const SLIDES = [
         </span>
         <span className="block">tout chauds</span>
         <span className="flex items-center gap-3">
-          chez vous <Rings />
+          chez toi <Rings />
         </span>
       </>
     ),
-    text: "Votre commande arrive en 25 à 35 minutes. Livraison offerte dès 40 $.",
+    text: "Ta commande arrive en 25 à 35 minutes. Livraison offerte dès 40 $.",
     art: [
       { src: "/food/raviolis-vapeur.svg", cls: "left-[0%] top-[2%] w-[66%]" },
       { src: "/food/poulet-croustillant.svg", cls: "right-[0%] top-[32%] w-[62%]" },

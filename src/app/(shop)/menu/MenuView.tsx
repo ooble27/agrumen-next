@@ -12,6 +12,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogoMark } from "@/components/Logo";
 import { Food } from "@/components/Food";
 import { Sheet } from "@/components/Sheet";
+import { Marker, Marquee } from "@/components/Fun";
 
 type Sort = "popular" | "asc" | "desc";
 const SORTS: { id: Sort; label: string }[] = [
@@ -20,15 +21,15 @@ const SORTS: { id: Sort; label: string }[] = [
   { id: "desc", label: "Prix décroissant" },
 ];
 
-type Tab = { id: "popular" | Category; label: string; icon?: string };
+type Tab = { id: "popular" | Category; label: string; icon?: string; color: string };
 const TABS: Tab[] = [
-  { id: "popular", label: "Populaires" },
-  { id: "nems", label: "Nems", icon: "/food/nems-poulet.svg" },
-  { id: "samoussas", label: "Samoussas", icon: "/food/samoussas.svg" },
-  { id: "raviolis", label: "Raviolis", icon: "/food/raviolis-vapeur.svg" },
-  { id: "plats", label: "Plats", icon: "/food/riz-cantonais.svg" },
-  { id: "desserts", label: "Desserts", icon: "/food/degue.svg" },
-  { id: "boissons", label: "Boissons", icon: "/food/limonade-fraise.svg" },
+  { id: "popular", label: "Populaires", color: "#FF7A1A" },
+  { id: "nems", label: "Nems", icon: "/food/nems-poulet.svg", color: "#F6B24A" },
+  { id: "samoussas", label: "Samoussas", icon: "/food/samoussas.svg", color: "#E9A35A" },
+  { id: "raviolis", label: "Raviolis", icon: "/food/raviolis-vapeur.svg", color: "#6FA8FF" },
+  { id: "plats", label: "Plats", icon: "/food/riz-cantonais.svg", color: "#FF6B6B" },
+  { id: "desserts", label: "Desserts", icon: "/food/degue.svg", color: "#B98AFF" },
+  { id: "boissons", label: "Boissons", icon: "/food/limonade-fraise.svg", color: "#FF5C8A" },
 ];
 
 function off(slug: string) {
@@ -163,8 +164,8 @@ export function MenuView() {
       <div className="mt-7 lg:mt-0">
         <p className="h-6 text-[16px] text-muted">{hello && `${hello} !`}</p>
         <h1 className="mt-1 text-[30px] font-medium leading-[1.08] tracking-[-0.03em] sm:text-[36px] lg:text-[44px]">
-          Qu’est-ce qui vous
-          <br className="sm:hidden" /> ferait plaisir ?
+          Qu’est-ce qui te
+          <br className="sm:hidden" /> fait <Marker>envie</Marker> ?
         </h1>
         <StoreInfo className="mt-4" />
       </div>
@@ -175,7 +176,7 @@ export function MenuView() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Rechercher un plat, une boisson…"
+          placeholder="Nems, samoussas, dégué…"
           className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted"
           enterKeyHint="search"
         />
@@ -204,8 +205,8 @@ export function MenuView() {
             <Grid items={results} />
           ) : (
             <div className="rounded-[26px] bg-surface px-6 py-14 text-center">
-              <p className="text-lg font-medium">Rien trouvé</p>
-              <p className="mt-1 text-muted">Essayez « nems », « poulet » ou « limonade ».</p>
+              <p className="text-lg font-medium">Oups, rien trouvé</p>
+              <p className="mt-1 text-muted">Essaie « nems », « poulet » ou « dégué ».</p>
             </div>
           )}
         </section>
@@ -261,7 +262,16 @@ export function MenuView() {
             </div>
           </section>
 
-          {/* Catégories collantes, avec pastille animée */}
+          <Marquee
+            items={[
+              { text: "Croustillant", icon: "/food/nems-poulet.svg" },
+              { text: "Fait maison", icon: "/food/samoussas.svg" },
+              { text: "Tout chaud", icon: "/food/raviolis-vapeur.svg" },
+              { text: "Livré vite", icon: "/food/degue.svg" },
+            ]}
+          />
+
+          {/* Catégories collantes */}
           <nav aria-label="Catégories" className="sticky top-0 z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]">
             <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
               {TABS.map((t) => {
@@ -275,11 +285,12 @@ export function MenuView() {
                     type="button"
                     onClick={() => jump(t.id)}
                     aria-current={on}
+                    style={on ? undefined : { background: `color-mix(in srgb, ${t.color} 22%, var(--bg))` }}
                     className={`relative z-10 flex h-11 shrink-0 items-center gap-2 rounded-full border pl-1.5 pr-4 text-[15px] transition-colors duration-300 ${
-                      on ? "border-transparent bg-[#151515] text-white dark:bg-white dark:text-[#151515]" : "border-line text-ink/70"
+                      on ? "border-transparent bg-[#151515] text-white dark:bg-white dark:text-[#151515]" : "border-transparent text-ink"
                     }`}
                   >
-                    <span className={`grid size-8 place-items-center rounded-full ${on ? "bg-white/15 dark:bg-black/5" : "bg-surface"}`}>
+                    <span className={`grid size-8 place-items-center rounded-full ${on ? "bg-white/15 dark:bg-black/5" : "bg-bg/70"}`}>
                       {t.icon ? (
                         <Image src={t.icon} alt="" width={28} height={28} className="size-7 object-contain" />
                       ) : (

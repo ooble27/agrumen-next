@@ -81,3 +81,25 @@ export function useCartBump() {
     () => 0,
   );
 }
+
+/* ------------------------------------------------------- confettis (une fois) */
+let party = false;
+const partyListeners = new Set<() => void>();
+/** À appeler juste avant d'afficher la confirmation d'une nouvelle commande. */
+export function celebrate() {
+  party = true;
+}
+export function endCelebration() {
+  party = false;
+  partyListeners.forEach((l) => l());
+}
+export function useCelebration() {
+  return useSyncExternalStore(
+    (l) => {
+      partyListeners.add(l);
+      return () => partyListeners.delete(l);
+    },
+    () => party,
+    () => false,
+  );
+}
