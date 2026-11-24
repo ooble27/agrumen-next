@@ -46,6 +46,7 @@ class Art {
   g(grad) { this.defs.push(grad.def); return `url(#${grad.id})`; }
   add(s) { this.body.push(s); return this; }
   shadow(cx, cy, rx, ry, o = 0.22) {
+    if (!Art.shadows) return this;
     const fid = id("b");
     this.defs.push(`<filter id="${fid}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${f(ry * 0.45)}"/></filter>`);
     return this.add(`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#1a120b" opacity="${o}" filter="url(#${fid})"/>`);
@@ -213,4 +214,5 @@ function mint(a, cx, cy, s, ang) {
   leaf(a, cx + 4, cy + 2, s * 0.8, ang + 40, "#a8ec8a", "#3fae55");
 }
 
+Art.shadows = false; // pas d'ombre portée au sol
 module.exports = { rng, blob, Art, lin, rad, plate, bowl, dip, shade, nem, leaf, lettuce, chili, samosa, dumpling, glass, citrusSlice, strawberry, mint, GOLD, f };

@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { MapPin, ShoppingBag } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { price } from "@/lib/format";
-import { useCart } from "@/lib/store";
+import { useCart, useProfile } from "@/lib/store";
+import { Avatar } from "./Avatar";
 import { useCartBump } from "@/lib/fx";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -21,6 +22,7 @@ export function TopNav() {
   const pathname = usePathname();
   const { count, subtotal } = useCart();
   const bump = useCartBump();
+  const profile = useProfile();
 
   return (
     <header className="sticky top-0 z-40 hidden border-b border-line bg-bg/85 backdrop-blur-xl lg:block">
@@ -50,6 +52,9 @@ export function TopNav() {
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <ThemeToggle />
+          <Link href="/profil" aria-label="Mon profil" className="transition active:scale-90">
+            <Avatar profile={profile} className="size-12 text-[17px]" />
+          </Link>
           <Link
             href="/panier"
             data-cart-target=""

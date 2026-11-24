@@ -35,3 +35,9 @@ Sur iPhone : Safari → Partager → « Sur l'écran d'accueil ». Sur Android :
 
 Les commandes sont envoyées sur WhatsApp au numéro défini dans `SITE.whatsapp`.
 
+## Adresse et carte
+
+- Recherche d'adresse : [Photon](https://photon.komoot.io) (OpenStreetMap), sans clé.
+- Carte : tuiles [OpenStreetMap](https://www.openstreetmap.org/copyright) via Leaflet ; le mode sombre est un filtre CSS.
+- Zone de livraison : `SITE.store` (centre) et `SITE.deliveryRadiusKm` (rayon) dans `src/lib/site.ts`.
+

@@ -6,6 +6,9 @@ export const SITE = {
   name: "Nemsy",
   tagline: "Nems croustillants, livrés tout chauds chez vous.",
   city: "Montréal, QC",
+  /** Point de départ des livraisons (centre de la zone) et rayon livré, en km. */
+  store: { lat: 45.5088, lon: -73.5617 },
+  deliveryRadiusKm: 12,
   /** Adresse affichée pour la cueillette sur place. */
   pickupAddress: "Montréal, QC",
   /**
