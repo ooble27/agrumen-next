@@ -108,9 +108,17 @@ export function ConfirmationView() {
         )}
       </div>
 
+      {order && (
+        <Link
+          href={`/suivi/${order.id}`}
+          className="mt-8 flex h-[60px] items-center justify-center gap-2 rounded-full bg-orange text-[17px] font-semibold text-white transition active:scale-[0.98]"
+        >
+          Suivre ma commande en direct
+        </Link>
+      )}
       <Link
         href="/menu"
-        className="mt-8 flex h-[60px] items-center justify-center rounded-full bg-btn text-[17px] font-medium text-btn-fg transition active:scale-[0.98]"
+        className={`${order ? "mt-3" : "mt-8"} flex h-[60px] items-center justify-center rounded-full bg-btn text-[17px] font-medium text-btn-fg transition active:scale-[0.98]`}
       >
         Retour au menu
       </Link>

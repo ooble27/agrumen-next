@@ -6,16 +6,24 @@ import { ShoppingBag } from "lucide-react";
 import { price } from "@/lib/format";
 import { useCart } from "@/lib/store";
 import { useCartBump } from "@/lib/fx";
+import { useOrders } from "@/lib/store";
+import { useNow } from "@/lib/now";
+import { isActive } from "@/lib/tracking";
 
 /** Barre « Voir le panier » au-dessus de la barre du bas (mobile). */
 export function CartBar() {
   const pathname = usePathname();
   const { count, subtotal } = useCart();
   const bump = useCartBump();
+  const lastOrder = useOrders()[0];
+  const now = useNow();
+  const live = !!now && isActive(lastOrder, now);
   if (count === 0 || !["/menu", "/favoris"].includes(pathname)) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)] z-40 flex justify-center px-4 lg:hidden">
+    <div
+      className={`fixed inset-x-0 z-40 flex justify-center px-4 lg:hidden ${live ? "bottom-[calc(max(14px,env(safe-area-inset-bottom))+152px)]" : "bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)]"}`}
+    >
       <Link
         href="/panier"
         className="slide-up press flex h-14 w-full max-w-[400px] items-center gap-3 rounded-full bg-brand pl-2 pr-5 text-white shadow-[0_18px_40px_-14px_rgba(47,158,75,.75)]"

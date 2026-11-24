@@ -158,7 +158,12 @@ export function ProfileView() {
                     </p>
                     <p className="mt-1 line-clamp-1 text-[15px] font-medium">{o.lines.map((l) => `${l.qty} × ${l.name}`).join(", ")}</p>
                     <div className="mt-3 flex items-center justify-between">
-                      <span className="text-[17px] font-semibold">{price(o.total)}</span>
+                      <span className="flex items-center gap-2">
+                        <span className="text-[17px] font-semibold">{price(o.total)}</span>
+                        <Link href={`/suivi/${o.id}`} className="text-[13px] font-medium text-orange underline-offset-2 hover:underline">
+                          Suivi
+                        </Link>
+                      </span>
                       <button
                         type="button"
                         onClick={() => {
