@@ -25,7 +25,13 @@ export function Avatar({ profile, className = "size-12" }: { profile: Partial<Pr
   return (
     <span className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full bg-orange text-white ${className}`}>
       {src ? (
-        <Image src={src} alt="" fill unoptimized sizes="96px" className="object-cover" />
+        <>
+          <Image src={src} alt="" fill unoptimized sizes="96px" className="object-cover" />
+          {/* initiales sur les dégradés (pas sur une photo) */}
+          {!profile.avatar?.startsWith("data:") && initials && (
+            <span className="relative text-[0.95em] font-semibold tracking-tight [text-shadow:0_1px_6px_rgba(0,0,0,.2)]">{initials}</span>
+          )}
+        </>
       ) : initials ? (
         <span className="text-[0.95em] font-bold">{initials}</span>
       ) : (

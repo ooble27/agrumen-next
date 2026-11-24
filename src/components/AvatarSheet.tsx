@@ -53,7 +53,7 @@ export function AvatarSheet({
       <input ref={camera} type="file" accept="image/*" capture="user" hidden onChange={(e) => pick(e.target.files?.[0])} />
       {error && <p className="mt-2 text-center text-[13px] text-[#ff5a5a]">{error}</p>}
 
-      <p className="mb-3 mt-6 px-1 text-[13px] font-semibold uppercase tracking-wider text-muted">Ou choisis un perso</p>
+      <p className="mb-3 mt-6 px-1 text-[13px] font-semibold uppercase tracking-wider text-muted">Ou choisis une couleur</p>
       <div className="grid grid-cols-4 gap-3 pb-2">
         {AVATARS.map((id) => {
           const on = profile.avatar === id;
