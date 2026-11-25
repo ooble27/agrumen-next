@@ -1,5 +1,6 @@
 # Véhicule du suivi de commande
 
-`van.html` modélise la camionnette de livraison en 3D (Three.js) et la rend vue du dessus (jour et nuit, phares allumés).
-
-Pour la régénérer : servir le dossier contenant `node_modules/three` en HTTP, ouvrir `van.html`, puis enregistrer `window.result.topDay` et `window.result.topNight` (data URL PNG) dans `public/vehicles/van-day.png` et `public/vehicles/van-night.png` (redimensionnés en 320 px).
+- `src/lib/car3d.ts` : la voiture électrique en 3D (Three.js), utilisée dans la carte 3D.
+- `carlib.js` + `cartop.html` : même modèle, pour régénérer les vues du dessus de la carte 2D de secours
+  (`public/vehicles/car-day.png` et `car-night.png`). Servir ce dossier avec `node_modules/three` en HTTP,
+  ouvrir `cartop.html`, enregistrer `window.res.d` et `window.res.n` (data URL PNG).

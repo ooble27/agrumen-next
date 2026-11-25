@@ -73,6 +73,30 @@ export function MenuView() {
 
   const promoRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const [stuck, setStuck] = useState(false);
+
+  /* Barre des catégories collée en haut : on remplit la zone de l'heure et de la batterie */
+  useEffect(() => {
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const el = navRef.current;
+      if (!el) return;
+      const top = parseFloat(getComputedStyle(el).top) || 0;
+      const isStuck = el.getBoundingClientRect().top <= top + 0.5 && window.scrollY > 0;
+      setStuck((s) => (s === isStuck ? s : isStuck));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    check();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
   const chipRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const touching = useRef(false);
   const jumping = useRef(false);
@@ -271,7 +295,12 @@ export function MenuView() {
           </section>
 
           {/* Catégories collantes */}
-          <nav aria-label="Catégories" className="sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]">
+          <nav
+            ref={navRef}
+            aria-label="Catégories"
+            data-stuck={stuck || undefined}
+            className="cat-bar sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]"
+          >
             <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
               {TABS.map((t) => {
                 const on = active === t.id;

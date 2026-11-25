@@ -460,3 +460,26 @@ body,
 .van-night { display: none; }
 :root[data-theme="dark"] .van-day { display: none; }
 :root[data-theme="dark"] .van-night { display: block; }
+
+/* Barre des catégories collée : fond plein derrière l'heure et la batterie */
+.cat-bar::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 100%;
+  height: env(safe-area-inset-top);
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+}
+.cat-bar[data-stuck]::before {
+  opacity: 1;
+}
+.cat-bar[data-stuck] {
+  box-shadow: 0 1px 0 var(--line);
+}
+@media (min-width: 1024px) {
+  .cat-bar::before {
+    display: none;
+  }
+}
