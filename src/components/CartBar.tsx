@@ -22,7 +22,7 @@ export function CartBar() {
 
   return (
     <div
-      className={`fixed inset-x-0 z-40 flex justify-center px-4 lg:hidden ${live ? "bottom-[calc(max(14px,env(safe-area-inset-bottom))+152px)]" : "bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)]"}`}
+      className={`fixed inset-x-0 z-40 flex justify-center px-4 lg:hidden ${live ? "bottom-[calc(max(14px,env(safe-area-inset-bottom))+166px)]" : "bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)]"}`}
     >
       <Link
         href="/panier"

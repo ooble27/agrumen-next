@@ -7,8 +7,8 @@ import { fetchRoute } from "./TrackingMap";
 
 type Pt = { lat: number; lon: number };
 
-/** Taille d’affichage du véhicule (x7 par rapport au réel, pour être lisible sur la carte). */
-const VAN_SCALE = 7;
+/** Taille d’affichage du véhicule (x3,4 : lisible, et reste dans la largeur de la rue). */
+const VAN_SCALE = 3.4;
 const ease = (t: number) => t * t * (3 - 2 * t);
 
 const pin = (html: string) => {
@@ -57,7 +57,7 @@ export function TrackingMap3D({
     let cleanup = () => {};
 
     (async () => {
-      const [maplibregl, THREE, { buildVan }] = await Promise.all([import("maplibre-gl"), import("three"), import("@/lib/van3d")]);
+      const [maplibregl, THREE, { buildCar }, { RoomEnvironment }] = await Promise.all([import("maplibre-gl"), import("three"), import("@/lib/car3d"), import("three/examples/jsm/environments/RoomEnvironment.js")]);
       if (cancelled || !el.current) return;
       // worker servi depuis public/ (le bundler ne le fournit pas) ; à recopier si maplibre-gl est mis à jour
       maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
@@ -96,10 +96,11 @@ export function TrackingMap3D({
               "source-layer": "building",
               minzoom: 13,
               paint: {
-                "fill-extrusion-color": dark ? "#2b2f35" : "#e6e3dc",
+                "fill-extrusion-color": dark ? "#30343b" : "#ebe8e1",
                 "fill-extrusion-height": ["coalesce", ["get", "render_height"], 8],
                 "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
-                "fill-extrusion-opacity": dark ? 0.85 : 0.9,
+                "fill-extrusion-opacity": 1,
+                "fill-extrusion-vertical-gradient": true,
               },
             },
             firstLabel,
@@ -126,7 +127,7 @@ export function TrackingMap3D({
         new maplibregl.Marker({ element: pin(HOME), anchor: "bottom" }).setLngLat([to.lon, to.lat]).addTo(map);
 
         // Camionnette 3D (calque Three.js dans la carte)
-        const { van, setNight } = buildVan();
+        const { car: van, setNight } = buildCar();
         setNight(dark);
         const scene = new THREE.Scene();
         scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, dark ? 1.4 : 2.2));
@@ -147,6 +148,12 @@ export function TrackingMap3D({
             renderer = new THREE.WebGLRenderer({ canvas: map.getCanvas(), context: gl, antialias: true });
             renderer.autoClear = false;
             renderer.outputColorSpace = THREE.SRGBColorSpace;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = dark ? 0.9 : 0.85;
+            // reflets réalistes sur la peinture et le verre
+            const pm = new THREE.PMREMGenerator(renderer);
+            scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+            pm.dispose();
           },
           render(_gl, args) {
             if (!renderer) return;
@@ -222,7 +229,7 @@ export function TrackingMap3D({
           const moving = k > 0 && k < 1;
           if (moving && followRef.current && now - lastFollow > 900 && !map.isMoving()) {
             lastFollow = now;
-            map.easeTo({ center: vanPos, zoom: 16.9, pitch: 60, bearing: vanHeading - 20, duration: 1000, easing: (x) => x });
+            map.easeTo({ center: vanPos, zoom: 17.6, pitch: 62, bearing: vanHeading - 20, duration: 1000, easing: (x) => x });
           }
           raf = requestAnimationFrame(frame);
         };

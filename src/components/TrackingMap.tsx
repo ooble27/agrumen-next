@@ -10,7 +10,7 @@ type Pt = { lat: number; lon: number };
 const STORE = `<div style="width:44px;height:44px;border-radius:999px;background:#151515;display:grid;place-items:center;box-shadow:0 6px 16px -6px rgba(0,0,0,.5);border:3px solid #fff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg></div>`;
 const HOME = `<svg viewBox="0 0 36 46" width="36" height="46" xmlns="http://www.w3.org/2000/svg"><path d="M18 42C8 30 3 23 3 16a15 15 0 1 1 30 0c0 7-5 14-15 26z" fill="#4CC764" stroke="#fff" stroke-width="2.5"/><path d="M11 17l7-6 7 6v7h-14z" fill="#fff"/></svg>`;
 // Camionnette 3D vue du dessus (rendu Three.js, voir tools/vehicles). Version nuit = phares allumés.
-const VAN = `<div class="van" style="width:96px;height:96px;will-change:transform"><img src="/vehicles/van-day.png" alt="" class="van-day" style="width:100%;height:100%"/><img src="/vehicles/van-night.png" alt="" class="van-night" style="width:100%;height:100%"/></div>`;
+const VAN = `<div class="van" style="width:96px;height:96px;will-change:transform"><img src="/vehicles/car-day.png" alt="" class="van-day" style="width:100%;height:100%"/><img src="/vehicles/car-night.png" alt="" class="van-night" style="width:100%;height:100%"/></div>`;
 
 /** Trajet par les vraies rues (OSRM, OpenStreetMap) ; repli sur une courbe si le service ne répond pas. */
 export async function fetchRoute(a: Pt, b: Pt): Promise<[number, number][]> {

@@ -1,0 +1,16 @@
+<!doctype html><html><body style="margin:0">
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { buildCar } from "/carlib.js";
+const r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(320,320);r.setClearColor(0,0);r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=0.85;
+const env=new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(),0.04).texture;
+function shadowTex(){const c=document.createElement('canvas');c.width=64;c.height=128;const g=c.getContext('2d');const gr=g.createRadialGradient(32,64,4,32,64,62);gr.addColorStop(0,'rgba(0,0,0,.5)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,64,128);return new THREE.CanvasTexture(c)}
+const out={};
+for(const night of [false,true]){const s=new THREE.Scene();s.environment=env;s.add(new THREE.HemisphereLight(0xffffff,0x777777,night?0.7:1.2));const d=new THREE.DirectionalLight(0xffffff,night?0.9:2);d.position.set(-4,8,3);s.add(d);
+const sh=new THREE.Mesh(new THREE.PlaneGeometry(2.8,6.2),new THREE.MeshBasicMaterial({map:shadowTex(),transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.set(0.2,0.01,0.1);s.add(sh);
+const {car,setNight}=buildCar(THREE);setNight(night);s.add(car);
+const k=3.2;const c=new THREE.OrthographicCamera(-k,k,k,-k,0.1,50);c.position.set(0,20,0);c.up.set(0,0,-1);c.lookAt(0,0,0);r.render(s,c);out[night?'n':'d']=r.domElement.toDataURL();}
+window.res=out;window.ready=true;
+</script></body></html>

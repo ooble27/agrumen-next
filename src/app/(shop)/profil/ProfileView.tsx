@@ -8,6 +8,8 @@ import { price } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 import { cartActions, setProfile, setThemePref, useFavorites, useOrders, useProfile, useThemePref, type ThemePref } from "@/lib/store";
 import { haptic } from "@/lib/fx";
+import { useNow } from "@/lib/now";
+import { isActive, trackOrder } from "@/lib/tracking";
 import { Food } from "@/components/Food";
 import { Sheet } from "@/components/Sheet";
 import { AddressSheet } from "@/components/AddressSheet";
@@ -75,6 +77,7 @@ export function ProfileView() {
   const orders = useOrders();
   const favs = useFavorites();
   const theme = useThemePref();
+  const now = useNow();
   const [sheet, setSheet] = useState<null | "infos" | "address" | "avatar">(null);
   const [draft, setDraft] = useState({ name: "", phone: "" });
 
@@ -141,45 +144,50 @@ export function ProfileView() {
             </Link>
           </div>
         ) : (
-          <div className="-mx-5 flex snap-x gap-3 overflow-x-auto px-5 pb-1">
-            {orders.slice(0, 8).map((o) => {
-              const prods = o.lines.map((l) => getProduct(l.slug)).filter(Boolean).slice(0, 3);
-              const tint = prods[0]?.tint ?? "green";
+          <ul className="divide-y divide-line overflow-hidden rounded-[24px] bg-surface">
+            {orders.slice(0, 5).map((o) => {
+              const first = getProduct(o.lines[0]?.slug ?? "");
+              const count = o.lines.reduce((n, l) => n + l.qty, 0);
+              const live = now > 0 && isActive(o, now);
+              const date = new Date(o.createdAt).toLocaleDateString("fr-CA", { day: "numeric", month: "short" });
               return (
-                <article key={o.id} className="w-[250px] shrink-0 snap-start overflow-hidden rounded-[24px] bg-surface">
-                  <div className={`tint-${tint} flex h-[110px] items-center justify-center gap-1 px-3`}>
-                    {prods.map((p, i) => (
-                      <Food key={p!.slug + i} src={p!.image} alt="" sizes="90px" className={i === 0 ? "size-[92px]" : "size-[64px]"} />
-                    ))}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-[12px] text-muted">
-                      {new Date(o.createdAt).toLocaleDateString("fr-CA", { weekday: "short", day: "numeric", month: "short" })} · #{o.id}
-                    </p>
-                    <p className="mt-1 line-clamp-1 text-[15px] font-medium">{o.lines.map((l) => `${l.qty} × ${l.name}`).join(", ")}</p>
-                    <div className="mt-3 flex items-center justify-between">
+                <li key={o.id}>
+                  <Link href={`/suivi/${o.id}`} className="flex items-center gap-3.5 px-4 py-3.5 transition active:bg-surface-2">
+                    <span className={`tint-${first?.tint ?? "green"} grid size-14 shrink-0 place-items-center rounded-[16px] p-1.5`}>
+                      {first && <Food src={first.image} alt="" sizes="56px" className="size-full" />}
+                    </span>
+                    <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-2">
-                        <span className="text-[17px] font-semibold">{price(o.total)}</span>
-                        <Link href={`/suivi/${o.id}`} className="text-[13px] font-medium text-orange underline-offset-2 hover:underline">
-                          Suivi
-                        </Link>
+                        <span className="truncate text-[15px] font-semibold">{o.lines.map((l) => l.name).join(", ")}</span>
                       </span>
+                      <span className="mt-0.5 block text-[13px] text-muted">
+                        {count} article{count > 1 ? "s" : ""} · {price(o.total)} · {date}
+                      </span>
+                      <span className={`mt-1 inline-flex items-center gap-1.5 text-[12px] font-medium ${live ? "text-orange" : "text-muted"}`}>
+                        <span className={`size-1.5 rounded-full ${live ? "bg-orange" : "bg-brand"}`} />
+                        {live ? trackOrder(o, now).title : o.mode === "pickup" ? "Récupérée" : "Livrée"}
+                      </span>
+                    </span>
+                    {!live && (
                       <button
                         type="button"
-                        onClick={() => {
+                        aria-label="Recommander"
+                        onClick={(e) => {
+                          e.preventDefault();
                           haptic();
                           o.lines.forEach((l) => cartActions.add(l.slug, l.qty, l.options ?? []));
                         }}
-                        className="flex h-9 items-center gap-1.5 rounded-full bg-[#151515] px-3.5 text-[13px] font-medium text-white transition active:scale-95 dark:bg-white dark:text-[#151515]"
+                        className="grid size-10 shrink-0 place-items-center rounded-full bg-bg transition active:scale-90"
                       >
-                        <RotateCcw className="size-3.5" /> Recommander
+                        <RotateCcw className="size-4" strokeWidth={2} />
                       </button>
-                    </div>
-                  </div>
-                </article>
+                    )}
+                    <ChevronRight className="size-5 shrink-0 text-faint" />
+                  </Link>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
       </section>
 
