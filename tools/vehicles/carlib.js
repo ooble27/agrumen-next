@@ -77,10 +77,10 @@ export function buildCar(THREE, opts = {}) {
   const pivot = new THREE.Group();
   car.position.set(-L / 2, 0, -depth / 2);
   pivot.add(car);
-  pivot.rotation.y = -Math.PI / 2; // u -> +Z ; on retourne ensuite
+  pivot.rotation.y = -Math.PI / 2; // l’avant (u = 0) se retrouve vers -Z
   const root = new THREE.Group();
   root.add(pivot);
-  root.rotation.y = Math.PI; // avant vers -Z
+  // avant vers -Z (la rotation du pivot suffit)
   const setNight = (on) => { head.emissiveIntensity = on ? 3 : 0.6; tail.emissiveIntensity = on ? 2.4 : 0.8; };
   return { car: root, setNight };
 }
