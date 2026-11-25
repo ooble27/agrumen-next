@@ -85,8 +85,10 @@ export function ProfileView() {
   const spent = orders.reduce((s, o) => s + o.total, 0);
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-40 pt-[max(18px,env(safe-area-inset-top))] lg:pb-16 lg:pt-8">
-      <h1 className="text-[32px] font-medium tracking-tight">{first ? `Salut ${first} !` : "Profil"}</h1>
+    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-40 pt-[max(18px,env(safe-area-inset-top))] lg:max-w-[1100px] lg:px-8 lg:pb-16 lg:pt-10">
+      <h1 className="text-[32px] font-medium tracking-tight lg:text-[34px] lg:font-semibold">{first ? `Salut ${first} !` : "Profil"}</h1>
+      <div className="lg:mt-2 lg:grid lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-12">
+      <div className="min-w-0">
 
       {/* Carte d'identité */}
       <section className="mt-5 overflow-hidden rounded-[28px] bg-[#151515] p-5 text-white dark:bg-surface">
@@ -191,6 +193,8 @@ export function ProfileView() {
         )}
       </section>
 
+      </div>
+      <div className="lg:sticky lg:top-[100px] lg:[&>section:first-child]:mt-5">
       <Group title="Compte">
         <Row
           icon={<MapPin className="size-5" strokeWidth={1.8} />}
@@ -270,6 +274,8 @@ export function ProfileView() {
           </a>
         </p>
       </footer>
+      </div>
+      </div>
 
       {/* Infos personnelles */}
       <Sheet open={sheet === "infos"} onClose={() => setSheet(null)} title="Mes infos">

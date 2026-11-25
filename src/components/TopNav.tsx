@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, ShoppingBag } from "lucide-react";
-import { SITE } from "@/lib/site";
+import { useState } from "react";
+import { ChevronDown, MapPin, ShoppingBag } from "lucide-react";
 import { price } from "@/lib/format";
-import { useCart, useProfile } from "@/lib/store";
+import { setProfile, useCart, useProfile } from "@/lib/store";
+import { AddressSheet } from "./AddressSheet";
 import { Avatar } from "./Avatar";
 import { useCartBump } from "@/lib/fx";
 import { Logo } from "./Logo";
@@ -23,18 +24,24 @@ export function TopNav() {
   const { count, subtotal } = useCart();
   const bump = useCartBump();
   const profile = useProfile();
+  const [picking, setPicking] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 hidden border-b border-line bg-bg/85 backdrop-blur-xl lg:block">
-      <div className="mx-auto flex h-[76px] max-w-6xl items-center gap-6 px-8">
+      <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-6 px-8">
         <Link href="/menu" aria-label="Accueil">
           <Logo />
         </Link>
-        <span className="flex h-11 items-center gap-2 rounded-full bg-surface px-4 text-[14px] text-ink/80">
-          <MapPin className="size-4" strokeWidth={1.7} />
-          {SITE.city}
-        </span>
-        <nav className="ml-4 flex gap-1">
+        <button
+          type="button"
+          onClick={() => setPicking(true)}
+          className="flex h-11 max-w-[260px] items-center gap-2 rounded-full bg-surface px-4 text-[14px] text-ink/85 transition hover:bg-surface-2"
+        >
+          <MapPin className="size-4 shrink-0" strokeWidth={1.7} />
+          <span className="truncate">{profile.address || "Choisir mon adresse"}</span>
+          <ChevronDown className="size-4 shrink-0 text-muted" />
+        </button>
+        <nav className="flex gap-1 xl:ml-4">
           {LINKS.map((l) => {
             const active = pathname === l.href || (l.href === "/menu" && pathname.startsWith("/produit"));
             return (
@@ -58,16 +65,24 @@ export function TopNav() {
           <Link
             href="/panier"
             data-cart-target=""
-            className="press flex h-12 items-center gap-3 rounded-full bg-[#151515] pl-5 pr-2 text-[15px] font-medium text-white dark:bg-white dark:text-[#151515]"
+            className="press flex h-12 shrink-0 items-center gap-3 rounded-full bg-[#151515] pl-5 pr-2 text-[15px] font-medium text-white dark:bg-white dark:text-[#151515]"
           >
             <ShoppingBag className="size-5" strokeWidth={1.7} />
             Panier
-            <span key={bump} className="bump grid h-8 min-w-8 place-items-center rounded-full bg-brand px-2.5 text-[13px] text-white">
-              {count > 0 ? `${count} · ${price(subtotal)}` : 0}
+            <span key={bump} className="bump grid h-8 min-w-8 place-items-center whitespace-nowrap rounded-full bg-brand px-2.5 text-[13px] text-white">
+              {count > 0 ? (
+                <span>
+                  {count}
+                  <span className="hidden xl:inline"> · {price(subtotal)}</span>
+                </span>
+              ) : (
+                0
+              )}
             </span>
           </Link>
         </div>
       </div>
+      <AddressSheet open={picking} onClose={() => setPicking(false)} value={profile} onConfirm={(patch) => setProfile({ ...profile, ...patch })} />
     </header>
   );
 }

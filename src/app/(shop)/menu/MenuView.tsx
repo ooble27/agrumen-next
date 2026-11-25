@@ -9,6 +9,7 @@ import { ETA, SITE } from "@/lib/site";
 import { discount, price } from "@/lib/format";
 import { ProductCard } from "@/components/ProductCard";
 import { AddressSheet } from "@/components/AddressSheet";
+import { CartPanel } from "@/components/CartPanel";
 import { setProfile, useProfile } from "@/lib/store";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Avatar } from "@/components/Avatar";
@@ -168,7 +169,8 @@ export function MenuView() {
   }, []);
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-6xl px-5 pb-56 pt-[max(16px,env(safe-area-inset-top))] sm:px-8 lg:pb-20 lg:pt-8">
+    <main className="mx-auto min-h-dvh w-full max-w-[1280px] px-5 pb-56 pt-[max(16px,env(safe-area-inset-top))] sm:px-8 lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10 lg:pb-20 lg:pt-8">
+      <div className="min-w-0">
       {/* En-tête mobile */}
       <header className="flex items-center gap-3 lg:hidden">
         <Link href="/profil" aria-label="Mon profil" className="transition active:scale-90">
@@ -259,22 +261,22 @@ export function MenuView() {
                 const n = Math.round(el.scrollLeft / w);
                 if (n !== promo) setPromo(n);
               }}
-              className="-mx-5 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-px-5 px-5 sm:-mx-8 sm:scroll-px-8 sm:px-8"
+              className="-mx-5 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-px-5 px-5 sm:-mx-8 sm:scroll-px-8 sm:px-8 xl:mx-0 xl:grid xl:grid-cols-3 xl:overflow-visible xl:px-0"
             >
               {PROMOS.map((p, i) => (
                 <Link
                   key={p.title}
                   href={p.href}
-                  className="press relative h-[172px] w-[88%] max-w-[440px] shrink-0 snap-start overflow-hidden rounded-[28px] text-white sm:w-[420px]"
+                  className="press relative h-[172px] w-[88%] max-w-[440px] shrink-0 snap-start overflow-hidden rounded-[28px] text-white sm:w-[420px] xl:w-auto xl:max-w-none"
                   style={{ background: p.bg }}
                 >
                   {/* halo lumineux derrière le plat */}
                   <span aria-hidden className="absolute -right-10 top-1/2 size-[230px] -translate-y-1/2 rounded-full opacity-60 blur-2xl" style={{ background: p.glow }} />
                   <span aria-hidden className="absolute -right-6 top-1/2 size-[190px] -translate-y-1/2 rounded-full border border-white/15" />
-                  <span className="absolute -right-4 top-1/2 h-[118%] w-[54%] -translate-y-1/2">
+                  <span className="absolute -right-4 top-1/2 h-[118%] w-[54%] -translate-y-1/2 xl:-right-8 xl:h-[96%] xl:w-[48%]">
                     <Food src={p.image} alt="" priority={i === 0} sizes="240px" className="size-full" />
                   </span>
-                  <div className="relative flex h-full w-[60%] flex-col p-5">
+                  <div className="relative flex h-full w-[60%] flex-col p-5 xl:w-[68%]">
                     <span className="w-fit rounded-full px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide" style={{ background: p.tagBg }}>
                       {p.tag}
                     </span>
@@ -299,9 +301,9 @@ export function MenuView() {
             ref={navRef}
             aria-label="Catégories"
             data-stuck={stuck || undefined}
-            className="cat-bar sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px]"
+            className="cat-bar sticky top-[env(safe-area-inset-top)] z-20 -mx-5 mt-4 bg-bg py-3 sm:-mx-8 lg:top-[76px] lg:mx-0"
           >
-            <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8">
+            <div ref={chipsRef} className="relative flex gap-2 overflow-x-auto px-5 sm:px-8 lg:px-0">
               {TABS.map((t) => {
                 const on = active === t.id;
                 return (
@@ -351,6 +353,15 @@ export function MenuView() {
           </div>
         </>
       )}
+
+      </div>
+
+      {/* Panier latéral (ordinateur) */}
+      <aside className="hidden lg:block">
+        <div className="sticky top-[100px]">
+          <CartPanel />
+        </div>
+      </aside>
 
       <AddressSheet
         open={sheet === "address"}
@@ -411,7 +422,7 @@ function StoreInfo({ className = "" }: { className?: string }) {
 
 function Grid({ items, priority }: { items: Product[]; priority?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5">
+    <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:gap-5">
       {items.map((p, i) => (
         <ProductCard key={p.slug} product={p} priority={priority && i < 4} />
       ))}

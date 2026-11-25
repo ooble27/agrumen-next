@@ -48,9 +48,9 @@ export function TrackView({ id }: { id: string }) {
   const onTheWay = tr.stage === "onTheWay" || tr.stage === "arriving";
 
   return (
-    <main className="relative mx-auto min-h-dvh w-full max-w-xl lg:pt-6">
+    <main className="relative mx-auto min-h-dvh w-full max-w-xl lg:grid lg:max-w-[1280px] lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start lg:gap-8 lg:px-8 lg:pt-8">
       {/* Carte */}
-      <div className="relative h-[52dvh] min-h-[320px] overflow-hidden lg:rounded-[32px]">
+      <div className="relative h-[52dvh] min-h-[320px] overflow-hidden lg:sticky lg:top-[100px] lg:h-[calc(100dvh-132px)] lg:rounded-[32px]">
         {pickup ? (
           <MapView lat={SITE.store.lat} lon={SITE.store.lon} className="h-full w-full" />
         ) : (
@@ -74,7 +74,7 @@ export function TrackView({ id }: { id: string }) {
       </div>
 
       {/* Panneau */}
-      <section className="relative z-10 -mt-8 rounded-t-[32px] bg-bg px-5 pb-16 pt-6 lg:mt-4 lg:rounded-[32px]">
+      <section className="relative z-10 -mt-8 rounded-t-[32px] bg-bg px-5 pb-16 pt-6 lg:mt-0 lg:rounded-[32px] lg:border lg:border-line lg:p-6">
         <div className="mx-auto -mt-3 mb-4 h-[5px] w-10 rounded-full bg-ink/15 lg:hidden" />
 
         {/* Heure d'arrivée */}
