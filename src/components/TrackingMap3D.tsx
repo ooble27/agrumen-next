@@ -8,7 +8,7 @@ import { fetchRoute } from "./TrackingMap";
 type Pt = { lat: number; lon: number };
 
 /** Taille d’affichage du véhicule (x3,4 : lisible, et reste dans la largeur de la rue). */
-const VAN_SCALE = 3.4;
+const VAN_SCALE = 4;
 const ease = (t: number) => t * t * (3 - 2 * t);
 
 const pin = (html: string) => {
@@ -57,7 +57,7 @@ export function TrackingMap3D({
     let cleanup = () => {};
 
     (async () => {
-      const [maplibregl, THREE, { buildCar }, { RoomEnvironment }] = await Promise.all([import("maplibre-gl"), import("three"), import("@/lib/car3d"), import("three/examples/jsm/environments/RoomEnvironment.js")]);
+      const [maplibregl, THREE, { buildCar, CAR_COLORS }, { RoomEnvironment }] = await Promise.all([import("maplibre-gl"), import("three"), import("@/lib/car3d"), import("three/examples/jsm/environments/RoomEnvironment.js")]);
       if (cancelled || !el.current) return;
       // worker servi depuis public/ (le bundler ne le fournit pas) ; à recopier si maplibre-gl est mis à jour
       maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
@@ -127,7 +127,7 @@ export function TrackingMap3D({
         new maplibregl.Marker({ element: pin(HOME), anchor: "bottom" }).setLngLat([to.lon, to.lat]).addTo(map);
 
         // Camionnette 3D (calque Three.js dans la carte)
-        const { car: van, setNight } = buildCar();
+        const { car: van, setNight } = buildCar({ color: CAR_COLORS.white });
         setNight(dark);
         const scene = new THREE.Scene();
         scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, dark ? 1.4 : 2.2));
