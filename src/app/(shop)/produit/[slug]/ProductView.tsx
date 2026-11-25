@@ -70,7 +70,9 @@ export function ProductView({ product, related }: { product: Product; related: P
       {/* Visuel */}
       <section className={`tint-${product.tint} relative rounded-b-[44px] px-5 pb-8 pt-[max(14px,env(safe-area-inset-top))] lg:sticky lg:top-[100px] lg:rounded-[44px] lg:pt-5`}>
         <div className="relative">
-          <PageHeader title={product.name} />
+          <div className="lg:invisible">
+            <PageHeader title={product.name} />
+          </div>
           <div className="absolute right-0 top-1">{cartButton}</div>
         </div>
         <span ref={foodRef} className="block">

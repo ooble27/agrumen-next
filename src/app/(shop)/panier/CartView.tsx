@@ -20,7 +20,7 @@ export function CartView() {
   const suggestions = PRODUCTS.filter((p) => !inCart.has(p.slug) && (p.category === "boissons" || p.category === "desserts" || p.slug === "frites")).slice(0, 5);
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-40 pt-[max(16px,env(safe-area-inset-top))] lg:pt-8">
+    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-40 pt-[max(16px,env(safe-area-inset-top))] lg:max-w-[1100px] lg:px-8 lg:pb-16 lg:pt-10">
       <PageHeader title="Mon panier" />
 
       {lines.length === 0 ? (
@@ -35,8 +35,9 @@ export function CartView() {
           </Link>
         </div>
       ) : (
-        <>
-          <ul className="mt-6 flex flex-col gap-4">
+        <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-12">
+          <div className="min-w-0">
+          <ul className="mt-6 flex flex-col gap-4 lg:mt-0">
             {lines.map((l) => (
               <li key={l.key}>
                 <SwipeRow onDelete={() => cartActions.setQty(l.key, 0)}>
@@ -113,8 +114,13 @@ export function CartView() {
             </section>
           )}
 
+          </div>
+
+          {/* Récapitulatif (colonne de droite sur ordinateur) */}
+          <aside className="lg:sticky lg:top-[100px] lg:rounded-[28px] lg:border lg:border-line lg:p-5">
+          <h2 className="hidden text-[20px] font-semibold tracking-tight lg:block">Récapitulatif</h2>
           {missing > 0 && (
-            <div className="mt-8 rounded-[22px] bg-surface p-4">
+            <div className="mt-8 rounded-[22px] bg-surface p-4 lg:mt-4">
               <p className="text-[14px] text-ink/80">
                 Plus que <span className="font-medium text-ink">{price(missing)}</span> pour la livraison offerte
               </p>
@@ -142,9 +148,17 @@ export function CartView() {
               <dd className="font-medium">{price(t.total)}</dd>
             </div>
           </dl>
+          <Link
+            href="/paiement"
+            className="mt-4 hidden h-[56px] items-center justify-between rounded-full bg-[#151515] pl-6 pr-2 text-[16px] font-semibold text-white transition hover:opacity-90 lg:flex dark:bg-white dark:text-[#151515]"
+          >
+            Passer au paiement
+            <span className="rounded-full bg-white/15 px-4 py-2 text-[15px] dark:bg-black/10">{price(t.total)}</span>
+          </Link>
+          </aside>
 
           <div
-            className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-12"
+            className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-12 lg:hidden"
             style={{ background: "var(--bar-fade)" }}
           >
             <Link
@@ -155,7 +169,7 @@ export function CartView() {
               <span className="rounded-full bg-white/15 px-4 py-2.5 text-[15px] dark:bg-black/10">{price(t.total)}</span>
             </Link>
           </div>
-        </>
+        </div>
       )}
     </main>
   );

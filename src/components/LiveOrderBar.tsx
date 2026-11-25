@@ -12,12 +12,12 @@ export function LiveOrderBar() {
   const pathname = usePathname();
   const order = useOrders()[0];
   const now = useNow();
-  if (!now || !order || !isActive(order, now) || !["/menu", "/favoris", "/profil"].includes(pathname)) return null;
+  if (!now || !order || !isActive(order, now) || !["/menu", "/favoris", "/profil", "/panier"].includes(pathname)) return null;
   const tr = trackOrder(order, now);
   const time = new Date(tr.etaAt).toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit" });
   const progress = tr.done ? 1 : (tr.step + 0.5) / tr.steps.length;
   return (
-    <div className="fixed inset-x-0 bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)] z-40 flex justify-center px-4 lg:bottom-6">
+    <div className="fixed inset-x-0 bottom-[calc(max(14px,env(safe-area-inset-bottom))+88px)] z-40 flex justify-center px-4 lg:inset-x-auto lg:bottom-6 lg:right-6 lg:w-[380px] lg:px-0">
       <Link
         href={`/suivi/${order.id}`}
         className="slide-up w-full max-w-[420px] overflow-hidden rounded-[22px] bg-[#151515] text-white shadow-[0_18px_40px_-16px_rgba(0,0,0,.55)] ring-1 ring-white/10 dark:bg-[#232323]"

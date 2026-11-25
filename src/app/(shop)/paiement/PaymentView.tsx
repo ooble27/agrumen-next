@@ -10,6 +10,7 @@ import { addOrder, cartActions, computeTotals, newOrderStamp, setProfile, useCar
 import { PageHeader } from "@/components/Header";
 import { celebrate } from "@/lib/fx";
 import { MapView } from "@/components/MapView";
+import { Food } from "@/components/Food";
 import { AddressSheet } from "@/components/AddressSheet";
 import { inZone } from "@/lib/geo";
 import { Checkbox, Radio } from "@/components/Option";
@@ -163,9 +164,11 @@ export function PaymentView() {
   }
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-10 pt-[max(16px,env(safe-area-inset-top))] lg:pt-8">
+    <main className="mx-auto min-h-dvh w-full max-w-xl px-5 pb-10 pt-[max(16px,env(safe-area-inset-top))] lg:max-w-[1100px] lg:px-8 lg:pb-16 lg:pt-10">
       <PageHeader title="Paiement" fallback="/panier" />
 
+      <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-12">
+      <div className="min-w-0">
       {/* Livraison / cueillette */}
       <div className="mt-6 grid grid-cols-2 gap-1.5 rounded-full bg-surface p-1.5">
         {(
@@ -342,9 +345,26 @@ export function PaymentView() {
         <Checkbox checked={terms} invalid={tried && !terms} />
         J’accepte les conditions de vente et la politique de confidentialité
       </label>
+      </div>
 
-      {/* Total */}
-      <section className="mt-8 rounded-[26px] bg-surface p-4">
+      {/* Total (colonne de droite sur ordinateur) */}
+      <section className="mt-8 rounded-[26px] bg-surface p-4 lg:sticky lg:top-[100px] lg:mt-6 lg:p-5">
+        <ul className="mb-4 hidden space-y-3 border-b border-line pb-4 lg:block">
+          {lines.map((l) => (
+            <li key={l.key} className="flex items-center gap-3">
+              <span className={`tint-${l.product.tint} grid size-12 shrink-0 place-items-center rounded-[14px] p-1`}>
+                <Food src={l.product.image} alt="" sizes="48px" className="size-full" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-medium">
+                  {l.qty} × {l.product.name}
+                </span>
+                <span className="block truncate text-[12px] text-muted">{l.label || l.product.portion}</span>
+              </span>
+              <span className="text-[14px] font-medium">{price(l.qty * l.unit)}</span>
+            </li>
+          ))}
+        </ul>
         <button type="button" onClick={() => setDetails((d) => !d)} className="flex w-full items-center justify-between px-1 text-left">
           <span>
             <span className="block text-[18px] font-medium">Montant total</span>
@@ -394,6 +414,7 @@ export function PaymentView() {
         </button>
         {tried && !valid && <p className="mt-3 text-center text-[13px] text-[#ff5a5a]">Complète les champs en rouge pour continuer.</p>}
       </section>
+      </div>
     </main>
   );
 }
